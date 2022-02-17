@@ -3,10 +3,6 @@
         "0": {
             "type": "composer",
             "url": "https://composer.typo3.org/"
-        },
-        "dfg-viewer": {
-            "type": "path",
-            "url": "/var/www/extensions/dfgviewer"
         }
     },
     "name": "typo3/cms-base-distribution",
@@ -39,7 +35,7 @@
         "typo3/cms-t3editor": "^9.5",
         "typo3/cms-tstemplate": "^9.5",
         "typo3/cms-viewpage": "^9.5",
-        "slub/dfgviewer": "dev-master",
+        "slub/dfgviewer": "^5.2",
         "georgringer/news": "^8.5",
         "sgalinski/lfeditor": "^6.0",
         "kitodo/presentation": "~3.2.0"
