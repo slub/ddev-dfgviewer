@@ -1,0 +1,13 @@
+.DS_Store
+.idea
+.vscode
+nbproject
+composer.lock
+/var
+/vendor
+/public/*
+!/public/.htaccess
+!/public/fileadmin/.gitkeep
+!/public/typo3conf
+/public/typo3conf/*
+!/public/typo3conf/LocalConfiguration.php
