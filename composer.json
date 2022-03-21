@@ -11,6 +11,11 @@
     "config": {
         "platform": {
             "php": "7.3"
+        },
+        "allow-plugins": {
+            "typo3/cms-composer-installers": true,
+            "typo3/class-alias-loader": true,
+            "helhum/typo3-console-plugin": true
         }
     },
     "require": {
@@ -35,10 +40,10 @@
         "typo3/cms-t3editor": "^9.5",
         "typo3/cms-tstemplate": "^9.5",
         "typo3/cms-viewpage": "^9.5",
-        "slub/dfgviewer": "^5.2",
+        "slub/dfgviewer": "^5.2|dev-master",
         "georgringer/news": "^8.5",
         "sgalinski/lfeditor": "^6.0",
-        "kitodo/presentation": "~3.2.0"
+        "kitodo/presentation": "~3.3.0"
     },
     "scripts": {
         "typo3-cms-scripts": [
