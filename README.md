@@ -7,7 +7,7 @@ DDEV Development System for the DFG-Viewer
 Just execute the `./start-basic.sh` script to
 
 * create and start the DDEV project
-* install all dependancies including TYPO3, Kitodo.Presentation and DFG-Viewer
+* install all dependencies including TYPO3, Kitodo.Presentation and DFG-Viewer
 * import the database
 
 ## Usage
