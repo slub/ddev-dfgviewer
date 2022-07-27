@@ -41,10 +41,10 @@
         "typo3/cms-t3editor": "^9.5",
         "typo3/cms-tstemplate": "^9.5",
         "typo3/cms-viewpage": "^9.5",
-        "slub/dfgviewer": "^5.2|dev-master",
+        "slub/dfgviewer": "^5.2|dev-master|dev-dev-extbase-fluid",
         "georgringer/news": "^8.5",
         "sgalinski/lfeditor": "^6.0",
-        "kitodo/presentation": "~3.3.0"
+        "kitodo/presentation": "^4.0|dev-master"
     },
     "scripts": {
         "typo3-cms-scripts": [
