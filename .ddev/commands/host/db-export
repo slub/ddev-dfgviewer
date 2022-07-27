@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+## Description: Export running database to .sql dump
+## Usage: db:export [db.sql]
+
+source ".ddev/commands/util.sh"
+
+DBFILE=$(db_file $1)
+
+sql="$(ddev export-db --gzip=false)"
+
+# Remove timestamps at end of file. Try GNU and BSD/Mac method.
+echo "$sql" | head --lines=-2 > "$DBFILE"
+if [[ $? != 0 ]]; then
+    echo "$sql" | tail -r | tail -n +2 | tail -r > "$DBFILE"
+fi
+
+echo
+echo -e "\033[0;33mBefore committing, please check that the dump is sane.\033[0m"

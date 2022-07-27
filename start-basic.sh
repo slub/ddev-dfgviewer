@@ -7,5 +7,5 @@ ddev start
 ddev composer install
 
 # import basic database
-ddev import-db -f dfg-viewer.sql.gz
+ddev db:import
 
