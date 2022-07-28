@@ -9,6 +9,7 @@ Just execute the `./start-basic.sh` script to
 * create and start the DDEV project
 * install all dependancies including TYPO3, Kitodo.Presentation and DFG-Viewer
 * import the database
+* update/download language packs (particularly for News extension)
 
 ## Usage
 
