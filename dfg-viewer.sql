@@ -34,8 +34,6 @@ CREATE TABLE `backend_layout` (
   `description` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -82,7 +80,7 @@ CREATE TABLE `be_groups` (
   `allowed_languages` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `custom_options` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `db_mountpoints` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pagetypes_select` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `pagetypes_select` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `tables_select` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `tables_modify` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `groupMods` text COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -93,6 +91,7 @@ CREATE TABLE `be_groups` (
   `subgroup` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `workspace_perms` smallint(6) NOT NULL DEFAULT 1,
   `category_perms` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `availableWidgets` text COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`,`deleted`,`hidden`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -115,7 +114,7 @@ DROP TABLE IF EXISTS `be_sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `be_sessions` (
-  `ses_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `ses_id` varchar(190) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `ses_iplock` varchar(39) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `ses_userid` int(10) unsigned NOT NULL DEFAULT 0,
   `ses_tstamp` int(10) unsigned NOT NULL DEFAULT 0,
@@ -179,6 +178,7 @@ CREATE TABLE `be_users` (
   `category_perms` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `tx_news_categorymounts` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `lfeditor_change_editing_modes` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `password_reset_token` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `username` (`username`),
   KEY `parent` (`pid`,`deleted`,`disable`)
@@ -191,8 +191,424 @@ CREATE TABLE `be_users` (
 
 LOCK TABLES `be_users` WRITE;
 /*!40000 ALTER TABLE `be_users` DISABLE KEYS */;
-INSERT INTO `be_users` VALUES (1,0,1645107375,1616020928,0,0,0,0,0,NULL,'admin',0,'$argon2i$v=19$m=65536,t=16,p=1$clBET1VodjV1bUlSZ1dkOQ$OM2ExbH4Q7HZZvpuZeRq6taZBgW9VC5FNfH6pFCF4Ec',1,'','','',NULL,0,'',NULL,'','',NULL,NULL,1,'',0,NULL,0,0,NULL,0,NULL,'',0),(2,0,1616021342,1616021342,0,0,0,0,0,NULL,'_cli_',0,'$argon2i$v=19$m=65536,t=16,p=1$QmpPTWtDbWFRVHNIRENjRQ$JBuvuV7UpBRCIZAOY4G9Fzwfzj+yFNyeLcgVup3nWJ0',1,'','','',NULL,0,'',NULL,'','',NULL,NULL,1,'',0,NULL,0,0,NULL,0,NULL,'',0);
+INSERT INTO `be_users` VALUES (1,0,1645107375,1616020928,0,0,0,0,0,NULL,'admin',0,'$argon2i$v=19$m=65536,t=16,p=1$clBET1VodjV1bUlSZ1dkOQ$OM2ExbH4Q7HZZvpuZeRq6taZBgW9VC5FNfH6pFCF4Ec',1,'','','',NULL,0,'',NULL,'','',NULL,NULL,1,'',0,NULL,0,0,NULL,0,NULL,'',0,''),(2,0,1616021342,1616021342,0,0,0,0,0,NULL,'_cli_',0,'$argon2i$v=19$m=65536,t=16,p=1$QmpPTWtDbWFRVHNIRENjRQ$JBuvuV7UpBRCIZAOY4G9Fzwfzj+yFNyeLcgVup3nWJ0',1,'','','',NULL,0,'',NULL,'','',NULL,NULL,1,'',0,NULL,0,0,NULL,0,NULL,'',0,'');
 /*!40000 ALTER TABLE `be_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_adminpanel_requestcache`
+--
+
+DROP TABLE IF EXISTS `cache_adminpanel_requestcache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_adminpanel_requestcache` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_adminpanel_requestcache`
+--
+
+LOCK TABLES `cache_adminpanel_requestcache` WRITE;
+/*!40000 ALTER TABLE `cache_adminpanel_requestcache` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_adminpanel_requestcache` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_adminpanel_requestcache_tags`
+--
+
+DROP TABLE IF EXISTS `cache_adminpanel_requestcache_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_adminpanel_requestcache_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_adminpanel_requestcache_tags`
+--
+
+LOCK TABLES `cache_adminpanel_requestcache_tags` WRITE;
+/*!40000 ALTER TABLE `cache_adminpanel_requestcache_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_adminpanel_requestcache_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_hash`
+--
+
+DROP TABLE IF EXISTS `cache_hash`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_hash` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_hash`
+--
+
+LOCK TABLES `cache_hash` WRITE;
+/*!40000 ALTER TABLE `cache_hash` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_hash` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_hash_tags`
+--
+
+DROP TABLE IF EXISTS `cache_hash_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_hash_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_hash_tags`
+--
+
+LOCK TABLES `cache_hash_tags` WRITE;
+/*!40000 ALTER TABLE `cache_hash_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_hash_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_imagesizes`
+--
+
+DROP TABLE IF EXISTS `cache_imagesizes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_imagesizes` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_imagesizes`
+--
+
+LOCK TABLES `cache_imagesizes` WRITE;
+/*!40000 ALTER TABLE `cache_imagesizes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_imagesizes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_imagesizes_tags`
+--
+
+DROP TABLE IF EXISTS `cache_imagesizes_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_imagesizes_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_imagesizes_tags`
+--
+
+LOCK TABLES `cache_imagesizes_tags` WRITE;
+/*!40000 ALTER TABLE `cache_imagesizes_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_imagesizes_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_lfeditor_select_options_cache`
+--
+
+DROP TABLE IF EXISTS `cache_lfeditor_select_options_cache`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_lfeditor_select_options_cache` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_lfeditor_select_options_cache`
+--
+
+LOCK TABLES `cache_lfeditor_select_options_cache` WRITE;
+/*!40000 ALTER TABLE `cache_lfeditor_select_options_cache` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_lfeditor_select_options_cache` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_lfeditor_select_options_cache_tags`
+--
+
+DROP TABLE IF EXISTS `cache_lfeditor_select_options_cache_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_lfeditor_select_options_cache_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_lfeditor_select_options_cache_tags`
+--
+
+LOCK TABLES `cache_lfeditor_select_options_cache_tags` WRITE;
+/*!40000 ALTER TABLE `cache_lfeditor_select_options_cache_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_lfeditor_select_options_cache_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_news_category`
+--
+
+DROP TABLE IF EXISTS `cache_news_category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_news_category` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_news_category`
+--
+
+LOCK TABLES `cache_news_category` WRITE;
+/*!40000 ALTER TABLE `cache_news_category` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_news_category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_news_category_tags`
+--
+
+DROP TABLE IF EXISTS `cache_news_category_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_news_category_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_news_category_tags`
+--
+
+LOCK TABLES `cache_news_category_tags` WRITE;
+/*!40000 ALTER TABLE `cache_news_category_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_news_category_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_pages`
+--
+
+DROP TABLE IF EXISTS `cache_pages`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_pages` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_pages`
+--
+
+LOCK TABLES `cache_pages` WRITE;
+/*!40000 ALTER TABLE `cache_pages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_pages` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_pages_tags`
+--
+
+DROP TABLE IF EXISTS `cache_pages_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_pages_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_pages_tags`
+--
+
+LOCK TABLES `cache_pages_tags` WRITE;
+/*!40000 ALTER TABLE `cache_pages_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_pages_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_pagesection`
+--
+
+DROP TABLE IF EXISTS `cache_pagesection`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_pagesection` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_pagesection`
+--
+
+LOCK TABLES `cache_pagesection` WRITE;
+/*!40000 ALTER TABLE `cache_pagesection` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_pagesection` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_pagesection_tags`
+--
+
+DROP TABLE IF EXISTS `cache_pagesection_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_pagesection_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_pagesection_tags`
+--
+
+LOCK TABLES `cache_pagesection_tags` WRITE;
+/*!40000 ALTER TABLE `cache_pagesection_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_pagesection_tags` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_rootline`
+--
+
+DROP TABLE IF EXISTS `cache_rootline`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_rootline` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `expires` int(10) unsigned NOT NULL DEFAULT 0,
+  `content` longblob DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(180),`expires`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_rootline`
+--
+
+LOCK TABLES `cache_rootline` WRITE;
+/*!40000 ALTER TABLE `cache_rootline` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_rootline` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cache_rootline_tags`
+--
+
+DROP TABLE IF EXISTS `cache_rootline_tags`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cache_rootline_tags` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `cache_id` (`identifier`(191)),
+  KEY `cache_tag` (`tag`(191))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cache_rootline_tags`
+--
+
+LOCK TABLES `cache_rootline_tags` WRITE;
+/*!40000 ALTER TABLE `cache_rootline_tags` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cache_rootline_tags` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -219,476 +635,6 @@ CREATE TABLE `cache_treelist` (
 LOCK TABLES `cache_treelist` WRITE;
 /*!40000 ALTER TABLE `cache_treelist` DISABLE KEYS */;
 /*!40000 ALTER TABLE `cache_treelist` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_adminpanel_requestcache`
---
-
-DROP TABLE IF EXISTS `cf_adminpanel_requestcache`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_adminpanel_requestcache` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_adminpanel_requestcache`
---
-
-LOCK TABLES `cf_adminpanel_requestcache` WRITE;
-/*!40000 ALTER TABLE `cf_adminpanel_requestcache` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_adminpanel_requestcache` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_adminpanel_requestcache_tags`
---
-
-DROP TABLE IF EXISTS `cf_adminpanel_requestcache_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_adminpanel_requestcache_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_adminpanel_requestcache_tags`
---
-
-LOCK TABLES `cf_adminpanel_requestcache_tags` WRITE;
-/*!40000 ALTER TABLE `cf_adminpanel_requestcache_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_adminpanel_requestcache_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_hash`
---
-
-DROP TABLE IF EXISTS `cf_cache_hash`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_hash` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_hash`
---
-
-LOCK TABLES `cf_cache_hash` WRITE;
-/*!40000 ALTER TABLE `cf_cache_hash` DISABLE KEYS */;
-INSERT INTO `cf_cache_hash` VALUES (1,'a341977e40078ac89538934c8436cc57',2145909600,'a:2:{i:0;a:3:{s:8:\"TSconfig\";a:3:{s:8:\"options.\";a:8:{s:15:\"enableBookmarks\";s:1:\"1\";s:10:\"file_list.\";a:4:{s:28:\"enableDisplayBigControlPanel\";s:10:\"selectable\";s:23:\"enableDisplayThumbnails\";s:10:\"selectable\";s:15:\"enableClipBoard\";s:10:\"selectable\";s:10:\"thumbnail.\";a:2:{s:5:\"width\";s:2:\"64\";s:6:\"height\";s:2:\"64\";}}s:9:\"pageTree.\";a:1:{s:31:\"doktypesToShowInNewPageDragArea\";s:21:\"1,6,4,7,3,254,255,199\";}s:12:\"contextMenu.\";a:1:{s:6:\"table.\";a:3:{s:6:\"pages.\";a:2:{s:12:\"disableItems\";s:0:\"\";s:5:\"tree.\";a:1:{s:12:\"disableItems\";s:0:\"\";}}s:9:\"sys_file.\";a:2:{s:12:\"disableItems\";s:0:\"\";s:5:\"tree.\";a:1:{s:12:\"disableItems\";s:0:\"\";}}s:15:\"sys_filemounts.\";a:2:{s:12:\"disableItems\";s:0:\"\";s:5:\"tree.\";a:1:{s:12:\"disableItems\";s:0:\"\";}}}}s:11:\"saveDocView\";s:1:\"1\";s:10:\"saveDocNew\";s:1:\"1\";s:11:\"saveDocNew.\";a:3:{s:5:\"pages\";s:1:\"0\";s:8:\"sys_file\";s:1:\"0\";s:17:\"sys_file_metadata\";s:1:\"0\";}s:14:\"disableDelete.\";a:1:{s:8:\"sys_file\";s:1:\"1\";}}s:9:\"admPanel.\";a:1:{s:7:\"enable.\";a:1:{s:3:\"all\";s:1:\"1\";}}s:12:\"TCAdefaults.\";a:1:{s:9:\"sys_note.\";a:2:{s:6:\"author\";s:0:\"\";s:5:\"email\";s:0:\"\";}}}s:8:\"sections\";a:0:{}s:5:\"match\";a:0:{}}i:1;s:32:\"a328e976dab15166dfc3cdbdaad9b3da\";}'),(2,'8a9f0568ebeb7dab8f6a43b222254343',2145909600,'a:2:{i:0;a:3:{s:8:\"TSconfig\";a:3:{s:8:\"options.\";a:8:{s:15:\"enableBookmarks\";s:1:\"1\";s:10:\"file_list.\";a:4:{s:28:\"enableDisplayBigControlPanel\";s:10:\"selectable\";s:23:\"enableDisplayThumbnails\";s:10:\"selectable\";s:15:\"enableClipBoard\";s:10:\"selectable\";s:10:\"thumbnail.\";a:2:{s:5:\"width\";s:2:\"64\";s:6:\"height\";s:2:\"64\";}}s:9:\"pageTree.\";a:1:{s:31:\"doktypesToShowInNewPageDragArea\";s:21:\"1,6,4,7,3,254,255,199\";}s:12:\"contextMenu.\";a:1:{s:6:\"table.\";a:3:{s:6:\"pages.\";a:2:{s:12:\"disableItems\";s:0:\"\";s:5:\"tree.\";a:1:{s:12:\"disableItems\";s:0:\"\";}}s:9:\"sys_file.\";a:2:{s:12:\"disableItems\";s:0:\"\";s:5:\"tree.\";a:1:{s:12:\"disableItems\";s:0:\"\";}}s:15:\"sys_filemounts.\";a:2:{s:12:\"disableItems\";s:0:\"\";s:5:\"tree.\";a:1:{s:12:\"disableItems\";s:0:\"\";}}}}s:11:\"saveDocView\";s:1:\"1\";s:10:\"saveDocNew\";s:1:\"1\";s:11:\"saveDocNew.\";a:3:{s:5:\"pages\";s:1:\"0\";s:8:\"sys_file\";s:1:\"0\";s:17:\"sys_file_metadata\";s:1:\"0\";}s:14:\"disableDelete.\";a:1:{s:8:\"sys_file\";s:1:\"1\";}}s:9:\"admPanel.\";a:1:{s:7:\"enable.\";a:1:{s:3:\"all\";s:1:\"1\";}}s:12:\"TCAdefaults.\";a:1:{s:9:\"sys_note.\";a:2:{s:6:\"author\";s:0:\"\";s:5:\"email\";s:0:\"\";}}}s:8:\"sections\";a:0:{}s:5:\"match\";a:0:{}}i:1;s:32:\"a328e976dab15166dfc3cdbdaad9b3da\";}');
-/*!40000 ALTER TABLE `cf_cache_hash` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_hash_tags`
---
-
-DROP TABLE IF EXISTS `cf_cache_hash_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_hash_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_hash_tags`
---
-
-LOCK TABLES `cf_cache_hash_tags` WRITE;
-/*!40000 ALTER TABLE `cf_cache_hash_tags` DISABLE KEYS */;
-INSERT INTO `cf_cache_hash_tags` VALUES (1,'a341977e40078ac89538934c8436cc57','ident_userTS_TSconfig'),(2,'8a9f0568ebeb7dab8f6a43b222254343','ident_userTS_TSconfig');
-/*!40000 ALTER TABLE `cf_cache_hash_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_imagesizes`
---
-
-DROP TABLE IF EXISTS `cf_cache_imagesizes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_imagesizes` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_imagesizes`
---
-
-LOCK TABLES `cf_cache_imagesizes` WRITE;
-/*!40000 ALTER TABLE `cf_cache_imagesizes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_imagesizes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_imagesizes_tags`
---
-
-DROP TABLE IF EXISTS `cf_cache_imagesizes_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_imagesizes_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_imagesizes_tags`
---
-
-LOCK TABLES `cf_cache_imagesizes_tags` WRITE;
-/*!40000 ALTER TABLE `cf_cache_imagesizes_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_imagesizes_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_news_category`
---
-
-DROP TABLE IF EXISTS `cf_cache_news_category`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_news_category` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_news_category`
---
-
-LOCK TABLES `cf_cache_news_category` WRITE;
-/*!40000 ALTER TABLE `cf_cache_news_category` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_news_category` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_news_category_tags`
---
-
-DROP TABLE IF EXISTS `cf_cache_news_category_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_news_category_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_news_category_tags`
---
-
-LOCK TABLES `cf_cache_news_category_tags` WRITE;
-/*!40000 ALTER TABLE `cf_cache_news_category_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_news_category_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_pages`
---
-
-DROP TABLE IF EXISTS `cf_cache_pages`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_pages` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_pages`
---
-
-LOCK TABLES `cf_cache_pages` WRITE;
-/*!40000 ALTER TABLE `cf_cache_pages` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_pages` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_pages_tags`
---
-
-DROP TABLE IF EXISTS `cf_cache_pages_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_pages_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_pages_tags`
---
-
-LOCK TABLES `cf_cache_pages_tags` WRITE;
-/*!40000 ALTER TABLE `cf_cache_pages_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_pages_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_pagesection`
---
-
-DROP TABLE IF EXISTS `cf_cache_pagesection`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_pagesection` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_pagesection`
---
-
-LOCK TABLES `cf_cache_pagesection` WRITE;
-/*!40000 ALTER TABLE `cf_cache_pagesection` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_pagesection` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_pagesection_tags`
---
-
-DROP TABLE IF EXISTS `cf_cache_pagesection_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_pagesection_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_pagesection_tags`
---
-
-LOCK TABLES `cf_cache_pagesection_tags` WRITE;
-/*!40000 ALTER TABLE `cf_cache_pagesection_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_pagesection_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_rootline`
---
-
-DROP TABLE IF EXISTS `cf_cache_rootline`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_rootline` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_rootline`
---
-
-LOCK TABLES `cf_cache_rootline` WRITE;
-/*!40000 ALTER TABLE `cf_cache_rootline` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_rootline` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_cache_rootline_tags`
---
-
-DROP TABLE IF EXISTS `cf_cache_rootline_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_cache_rootline_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_cache_rootline_tags`
---
-
-LOCK TABLES `cf_cache_rootline_tags` WRITE;
-/*!40000 ALTER TABLE `cf_cache_rootline_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_cache_rootline_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_extbase_datamapfactory_datamap`
---
-
-DROP TABLE IF EXISTS `cf_extbase_datamapfactory_datamap`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_extbase_datamapfactory_datamap` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_extbase_datamapfactory_datamap`
---
-
-LOCK TABLES `cf_extbase_datamapfactory_datamap` WRITE;
-/*!40000 ALTER TABLE `cf_extbase_datamapfactory_datamap` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_extbase_datamapfactory_datamap` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_extbase_datamapfactory_datamap_tags`
---
-
-DROP TABLE IF EXISTS `cf_extbase_datamapfactory_datamap_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_extbase_datamapfactory_datamap_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_extbase_datamapfactory_datamap_tags`
---
-
-LOCK TABLES `cf_extbase_datamapfactory_datamap_tags` WRITE;
-/*!40000 ALTER TABLE `cf_extbase_datamapfactory_datamap_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_extbase_datamapfactory_datamap_tags` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_lfeditor_select_options_cache`
---
-
-DROP TABLE IF EXISTS `cf_lfeditor_select_options_cache`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_lfeditor_select_options_cache` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `expires` int(10) unsigned NOT NULL DEFAULT 0,
-  `content` longblob DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(180),`expires`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_lfeditor_select_options_cache`
---
-
-LOCK TABLES `cf_lfeditor_select_options_cache` WRITE;
-/*!40000 ALTER TABLE `cf_lfeditor_select_options_cache` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_lfeditor_select_options_cache` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `cf_lfeditor_select_options_cache_tags`
---
-
-DROP TABLE IF EXISTS `cf_lfeditor_select_options_cache_tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `cf_lfeditor_select_options_cache_tags` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `identifier` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tag` varchar(250) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  KEY `cache_id` (`identifier`(191)),
-  KEY `cache_tag` (`tag`(191))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `cf_lfeditor_select_options_cache_tags`
---
-
-LOCK TABLES `cf_lfeditor_select_options_cache_tags` WRITE;
-/*!40000 ALTER TABLE `cf_lfeditor_select_options_cache_tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `cf_lfeditor_select_options_cache_tags` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -735,7 +681,7 @@ DROP TABLE IF EXISTS `fe_sessions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `fe_sessions` (
-  `ses_id` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `ses_id` varchar(190) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `ses_iplock` varchar(39) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `ses_userid` int(10) unsigned NOT NULL DEFAULT 0,
   `ses_tstamp` int(10) unsigned NOT NULL DEFAULT 0,
@@ -803,7 +749,8 @@ CREATE TABLE `fe_users` (
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`,`username`(100)),
   KEY `username` (`username`(100)),
-  KEY `is_online` (`is_online`)
+  KEY `is_online` (`is_online`),
+  KEY `felogin_forgotHash` (`felogin_forgotHash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -844,8 +791,6 @@ CREATE TABLE `pages` (
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `l10n_diffsource` mediumblob DEFAULT NULL,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -888,7 +833,6 @@ CREATE TABLE `pages` (
   `content_from_pid` int(10) unsigned NOT NULL DEFAULT 0,
   `mount_pid` int(10) unsigned NOT NULL DEFAULT 0,
   `mount_pid_ol` smallint(6) NOT NULL DEFAULT 0,
-  `alias` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `l18n_cfg` smallint(6) NOT NULL DEFAULT 0,
   `fe_login_mode` smallint(6) NOT NULL DEFAULT 0,
   `backend_layout` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -907,14 +851,17 @@ CREATE TABLE `pages` (
   `twitter_image` int(10) unsigned NOT NULL DEFAULT 0,
   `canonical_link` varchar(2048) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `categories` int(11) NOT NULL DEFAULT 0,
+  `sitemap_priority` decimal(2,1) NOT NULL DEFAULT 0.5,
+  `sitemap_changefreq` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `twitter_card` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
-  KEY `alias` (`alias`),
   KEY `determineSiteRoot` (`is_siteroot`),
   KEY `language_identifier` (`l10n_parent`,`sys_language_uid`),
   KEY `slug` (`slug`(127)),
   KEY `parent` (`pid`,`deleted`,`hidden`),
   KEY `translation_source` (`l10n_source`),
-  KEY `t3ver_oid` (`t3ver_oid`,`t3ver_wsid`)
+  KEY `t3ver_oid` (`t3ver_oid`,`t3ver_wsid`),
+  KEY `legacy_overlay` (`legacy_overlay_uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -924,7 +871,7 @@ CREATE TABLE `pages` (
 
 LOCK TABLES `pages` WRITE;
 /*!40000 ALTER TABLE `pages` DISABLE KEYS */;
-INSERT INTO `pages` VALUES (85,0,1628603526,1628603526,1,0,0,0,0,'',256,NULL,0,0,0,0,NULL,0,'a:1:{s:8:\"shortcut\";N;}',0,0,'',0,0,0,0,0,0,1,0,31,9,0,'DFG-Viewer','/',1,'TCEMAIN.permissions.groupid = 10',1,0,'',106,0,'',0,'',0,0,'',0,'',0,'',0,1645107681,'','',0,'','','',0,0,0,0,'',0,0,'','','EXT:dfgviewer/Configuration/TsConfig/Page.tsconfig',0,4,'',0,0,'',NULL,0,'',NULL,0,'',0),(86,85,1628603526,1628603526,1,0,0,0,0,'',768,'',0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'News Folder','/1',254,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,'',0,0,'','','',0,50,'',0,0,'','',0,'','',0,'',0),(87,85,1628603526,1628603526,1,0,0,0,0,'',640,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Kitodo Configuration','/kitodo-configuration-1',254,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,'',0,0,'','','',0,47,'',0,0,'',NULL,0,'',NULL,0,'',0),(88,85,1628603526,1628603526,1,0,0,0,0,'',576,NULL,0,0,0,0,NULL,57,'',0,0,'',0,0,0,0,0,0,1,10,31,0,0,'Fehler: 404 (Seite nicht gefunden)','/fehler-404-seite-nicht-gefunden',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',1,0,'','',0,'','','',1,0,0,0,'',0,0,'0','0','',0,8,'',0,0,'',NULL,0,'',NULL,0,'',0),(89,85,1628603526,1628603526,1,0,0,0,0,'',544,NULL,0,0,0,0,NULL,0,'a:46:{s:7:\"doktype\";N;s:5:\"title\";N;s:4:\"slug\";N;s:9:\"nav_title\";N;s:8:\"subtitle\";N;s:9:\"seo_title\";N;s:8:\"no_index\";N;s:9:\"no_follow\";N;s:8:\"og_title\";N;s:14:\"og_description\";N;s:8:\"og_image\";N;s:13:\"twitter_title\";N;s:19:\"twitter_description\";N;s:13:\"twitter_image\";N;s:8:\"abstract\";N;s:8:\"keywords\";N;s:11:\"description\";N;s:6:\"author\";N;s:12:\"author_email\";N;s:11:\"lastUpdated\";N;s:6:\"layout\";N;s:8:\"newUntil\";N;s:14:\"backend_layout\";N;s:25:\"backend_layout_next_level\";N;s:16:\"content_from_pid\";N;s:6:\"target\";N;s:13:\"cache_timeout\";N;s:10:\"cache_tags\";N;s:11:\"is_siteroot\";N;s:9:\"no_search\";N;s:13:\"php_tree_stop\";N;s:6:\"module\";N;s:5:\"media\";N;s:17:\"tsconfig_includes\";N;s:8:\"TSconfig\";N;s:8:\"l18n_cfg\";N;s:6:\"hidden\";N;s:8:\"nav_hide\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:16:\"extendToSubpages\";N;s:8:\"fe_group\";N;s:13:\"fe_login_mode\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Viewer','/show',1,'',0,0,'',0,0,'',0,'',0,0,'',900,'',0,'',0,1628603526,'','',0,'','','',1,0,0,0,'',0,0,'','','',0,9,'',1,1,'',NULL,0,'',NULL,0,'',0),(93,85,1628603526,1628603526,1,0,0,0,0,'',514,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,31,0,'Meta','/meta',254,NULL,0,0,'',0,0,'',0,'',0,0,NULL,0,'',0,NULL,0,0,NULL,'',0,'','','',0,0,0,0,'',0,0,'','','',0,13,'',0,0,'',NULL,0,'',NULL,0,'',0),(94,93,1628603526,1628603526,1,0,0,0,0,'',256,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Kontakt','/kontakt',1,'TCEFORM.tt_content.pi_flexform.PAGE_TSCONFIG_ID = 9731',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,'',0,0,'','','',0,14,'',0,0,'',NULL,0,'',NULL,0,'',0),(96,93,1628603526,1628603526,1,0,0,0,0,'',128,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Impressum','/impressum',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,'',0,0,'0','0','',0,17,'',0,0,'',NULL,0,'',NULL,0,'',0),(97,93,1628603526,1628603526,1,0,0,0,0,'',64,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,31,0,'Datenschutzerklärung','/datenschutzerklaerung',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,'',0,0,'','','',0,18,'',0,0,'',NULL,0,'',NULL,0,'',0),(98,93,1628603526,1628603526,1,0,0,0,0,'',32,'',0,0,0,0,NULL,0,'a:47:{s:7:\"doktype\";N;s:5:\"title\";N;s:4:\"slug\";N;s:9:\"nav_title\";N;s:8:\"subtitle\";N;s:9:\"seo_title\";N;s:8:\"no_index\";N;s:9:\"no_follow\";N;s:14:\"canonical_link\";N;s:8:\"og_title\";N;s:14:\"og_description\";N;s:8:\"og_image\";N;s:13:\"twitter_title\";N;s:19:\"twitter_description\";N;s:13:\"twitter_image\";N;s:8:\"abstract\";N;s:8:\"keywords\";N;s:11:\"description\";N;s:6:\"author\";N;s:12:\"author_email\";N;s:11:\"lastUpdated\";N;s:6:\"layout\";N;s:8:\"newUntil\";N;s:14:\"backend_layout\";N;s:25:\"backend_layout_next_level\";N;s:16:\"content_from_pid\";N;s:6:\"target\";N;s:13:\"cache_timeout\";N;s:10:\"cache_tags\";N;s:11:\"is_siteroot\";N;s:9:\"no_search\";N;s:13:\"php_tree_stop\";N;s:6:\"module\";N;s:5:\"media\";N;s:17:\"tsconfig_includes\";N;s:8:\"TSconfig\";N;s:8:\"l18n_cfg\";N;s:6:\"hidden\";N;s:8:\"nav_hide\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:16:\"extendToSubpages\";N;s:8:\"fe_group\";N;s:13:\"fe_login_mode\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Status','/status',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,'',0,0,'','','',0,49,'',0,0,'','',0,'','',0,'',0),(99,98,1628603526,1628603526,1,0,0,0,0,'',256,'',0,0,0,0,NULL,0,'a:1:{s:5:\"title\";N;}',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Detail','/status/details',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',1,0,0,0,'',0,0,'','','',0,51,'',0,0,'','',0,'','',0,'',0),(105,85,1628603526,1628603526,1,0,0,0,0,'',128,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,25,0,'Demo','/demo',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1658949210,'','',0,'','','',0,0,0,0,'',0,0,'','','',0,24,'',0,0,'',NULL,0,'',NULL,0,'',0),(106,85,1628603526,1628603526,1,0,0,0,0,'',64,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,25,0,'Das Projekt','/das-projekt',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,'',0,0,'','','',0,25,'',0,0,'',NULL,0,'',NULL,0,'',0),(111,106,1628603526,1628603526,1,0,0,0,0,'',16,NULL,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,10,31,31,0,'Was ist der DFG-Viewer?','/das-projekt/was-ist-der-dfg-viewer',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,'',0,0,'0','0','',0,30,'',0,0,'',NULL,0,'',NULL,0,'',0),(112,85,1658921465,1658921456,1,0,0,0,0,'',544,NULL,0,1,89,89,'{\"starttime\":\"parent\",\"endtime\":\"parent\",\"nav_hide\":\"parent\",\"url\":\"parent\",\"lastUpdated\":\"parent\",\"newUntil\":\"parent\",\"no_search\":\"parent\",\"shortcut\":\"parent\",\"shortcut_mode\":\"parent\",\"content_from_pid\":\"parent\",\"author\":\"parent\",\"author_email\":\"parent\",\"media\":\"parent\",\"og_image\":\"parent\",\"twitter_image\":\"parent\"}',0,'a:37:{s:7:\"doktype\";i:1;s:5:\"title\";s:6:\"Viewer\";s:4:\"slug\";s:5:\"/show\";s:9:\"nav_title\";s:0:\"\";s:8:\"subtitle\";s:0:\"\";s:9:\"seo_title\";s:0:\"\";s:8:\"og_title\";s:0:\"\";s:14:\"og_description\";N;s:13:\"twitter_title\";s:0:\"\";s:19:\"twitter_description\";N;s:8:\"abstract\";s:0:\"\";s:8:\"keywords\";s:0:\"\";s:11:\"description\";s:0:\"\";s:6:\"hidden\";i:0;s:10:\"categories\";i:0;s:14:\"rowDescription\";N;s:8:\"TSconfig\";s:0:\"\";s:13:\"php_tree_stop\";i:0;s:8:\"editlock\";i:0;s:6:\"layout\";i:0;s:8:\"fe_group\";s:0:\"\";s:16:\"extendToSubpages\";i:0;s:6:\"target\";s:0:\"\";s:5:\"alias\";s:0:\"\";s:13:\"cache_timeout\";i:900;s:10:\"cache_tags\";s:0:\"\";s:9:\"mount_pid\";i:0;s:11:\"is_siteroot\";i:0;s:12:\"mount_pid_ol\";i:0;s:6:\"module\";s:0:\"\";s:13:\"fe_login_mode\";i:0;s:8:\"l18n_cfg\";i:0;s:14:\"backend_layout\";s:0:\"\";s:25:\"backend_layout_next_level\";s:0:\"\";s:17:\"tsconfig_includes\";s:0:\"\";s:8:\"no_index\";i:1;s:9:\"no_follow\";i:1;}',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Viewer','/show',1,'',0,0,'',0,0,'',0,'',0,0,NULL,900,'',0,NULL,0,1658921465,NULL,'',0,'','','',1,0,0,0,'',0,0,'','','',0,0,'',1,1,'',NULL,0,'',NULL,0,'',0),(113,85,1658921506,1658921493,1,0,0,0,0,'',640,NULL,0,1,87,87,'{\"starttime\":\"parent\",\"endtime\":\"parent\",\"nav_hide\":\"parent\",\"url\":\"parent\",\"lastUpdated\":\"parent\",\"newUntil\":\"parent\",\"no_search\":\"parent\",\"shortcut\":\"parent\",\"shortcut_mode\":\"parent\",\"content_from_pid\":\"parent\",\"author\":\"parent\",\"author_email\":\"parent\",\"media\":\"parent\",\"og_image\":\"parent\",\"twitter_image\":\"parent\"}',0,'a:27:{s:7:\"doktype\";i:254;s:5:\"title\";s:20:\"Kitodo Configuration\";s:4:\"slug\";s:23:\"/kitodo-configuration-1\";s:6:\"hidden\";i:0;s:10:\"categories\";i:0;s:14:\"rowDescription\";N;s:8:\"TSconfig\";s:0:\"\";s:13:\"php_tree_stop\";i:0;s:8:\"editlock\";i:0;s:6:\"layout\";i:0;s:8:\"fe_group\";s:0:\"\";s:16:\"extendToSubpages\";i:0;s:6:\"target\";s:0:\"\";s:5:\"alias\";s:0:\"\";s:13:\"cache_timeout\";i:0;s:10:\"cache_tags\";s:0:\"\";s:9:\"mount_pid\";i:0;s:11:\"is_siteroot\";i:0;s:12:\"mount_pid_ol\";i:0;s:6:\"module\";s:0:\"\";s:13:\"fe_login_mode\";i:0;s:8:\"l18n_cfg\";i:0;s:14:\"backend_layout\";s:0:\"\";s:25:\"backend_layout_next_level\";s:0:\"\";s:17:\"tsconfig_includes\";s:0:\"\";s:8:\"no_index\";i:0;s:9:\"no_follow\";i:0;}',0,0,'',0,0,0,0,0,0,1,10,31,27,0,'Kitodo Configuration (EN)','/kitodo-configuration-en',254,'',0,0,'',0,0,'',0,'',0,0,NULL,0,'',0,NULL,0,0,NULL,'',0,'','','',0,0,0,0,'',0,0,'','','',0,0,'',0,0,'',NULL,0,'',NULL,0,'',0);
+INSERT INTO `pages` VALUES (85,0,1628603526,1628603526,1,0,0,0,0,'',256,NULL,0,0,0,0,NULL,0,'a:1:{s:8:\"shortcut\";N;}',0,0,0,0,0,0,0,1,0,31,9,0,'DFG-Viewer','/',1,'TCEMAIN.permissions.groupid = 10',1,0,'',106,0,'',0,'',0,0,'',0,'',0,'',0,1645107681,'','',0,'','','',0,0,0,0,0,0,'','','EXT:dfgviewer/Configuration/TsConfig/Page.tsconfig',0,4,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(86,85,1628603526,1628603526,1,0,0,0,0,'',768,'',0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,27,0,'News Folder','/1',254,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,0,0,'','','',0,50,'',0,0,'','',0,'','',0,'',0,0.5,'',''),(87,85,1628603526,1628603526,1,0,0,0,0,'',640,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,27,0,'Kitodo Configuration','/kitodo-configuration-1',254,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,0,0,'','','',0,47,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(88,85,1628603526,1628603526,1,0,0,0,0,'',576,NULL,0,0,0,0,NULL,57,'',0,0,0,0,0,0,0,1,10,31,0,0,'Fehler: 404 (Seite nicht gefunden)','/fehler-404-seite-nicht-gefunden',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',1,0,'','',0,'','','',1,0,0,0,0,0,'0','0','',0,8,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(89,85,1628603526,1628603526,1,0,0,0,0,'',544,NULL,0,0,0,0,NULL,0,'a:46:{s:7:\"doktype\";N;s:5:\"title\";N;s:4:\"slug\";N;s:9:\"nav_title\";N;s:8:\"subtitle\";N;s:9:\"seo_title\";N;s:8:\"no_index\";N;s:9:\"no_follow\";N;s:8:\"og_title\";N;s:14:\"og_description\";N;s:8:\"og_image\";N;s:13:\"twitter_title\";N;s:19:\"twitter_description\";N;s:13:\"twitter_image\";N;s:8:\"abstract\";N;s:8:\"keywords\";N;s:11:\"description\";N;s:6:\"author\";N;s:12:\"author_email\";N;s:11:\"lastUpdated\";N;s:6:\"layout\";N;s:8:\"newUntil\";N;s:14:\"backend_layout\";N;s:25:\"backend_layout_next_level\";N;s:16:\"content_from_pid\";N;s:6:\"target\";N;s:13:\"cache_timeout\";N;s:10:\"cache_tags\";N;s:11:\"is_siteroot\";N;s:9:\"no_search\";N;s:13:\"php_tree_stop\";N;s:6:\"module\";N;s:5:\"media\";N;s:17:\"tsconfig_includes\";N;s:8:\"TSconfig\";N;s:8:\"l18n_cfg\";N;s:6:\"hidden\";N;s:8:\"nav_hide\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:16:\"extendToSubpages\";N;s:8:\"fe_group\";N;s:13:\"fe_login_mode\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,0,0,0,0,0,1,10,31,27,0,'Viewer','/show',1,'',0,0,'',0,0,'',0,'',0,0,'',900,'',0,'',0,1628603526,'','',0,'','','',1,0,0,0,0,0,'','','',0,9,'',1,1,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(93,85,1628603526,1628603526,1,0,0,0,0,'',514,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,31,0,'Meta','/meta',254,NULL,0,0,'',0,0,'',0,'',0,0,NULL,0,'',0,NULL,0,0,NULL,'',0,'','','',0,0,0,0,0,0,'','','',0,13,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(94,93,1628603526,1628603526,1,0,0,0,0,'',256,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,27,0,'Kontakt','/kontakt',1,'TCEFORM.tt_content.pi_flexform.PAGE_TSCONFIG_ID = 9731',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,0,0,'','','',0,14,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(96,93,1628603526,1628603526,1,0,0,0,0,'',128,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,27,0,'Impressum','/impressum',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,0,0,'0','0','',0,17,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(97,93,1628603526,1628603526,1,0,0,0,0,'',64,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,31,0,'Datenschutzerklärung','/datenschutzerklaerung',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,0,0,'','','',0,18,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(98,93,1628603526,1628603526,1,0,0,0,0,'',32,'',0,0,0,0,NULL,0,'a:47:{s:7:\"doktype\";N;s:5:\"title\";N;s:4:\"slug\";N;s:9:\"nav_title\";N;s:8:\"subtitle\";N;s:9:\"seo_title\";N;s:8:\"no_index\";N;s:9:\"no_follow\";N;s:14:\"canonical_link\";N;s:8:\"og_title\";N;s:14:\"og_description\";N;s:8:\"og_image\";N;s:13:\"twitter_title\";N;s:19:\"twitter_description\";N;s:13:\"twitter_image\";N;s:8:\"abstract\";N;s:8:\"keywords\";N;s:11:\"description\";N;s:6:\"author\";N;s:12:\"author_email\";N;s:11:\"lastUpdated\";N;s:6:\"layout\";N;s:8:\"newUntil\";N;s:14:\"backend_layout\";N;s:25:\"backend_layout_next_level\";N;s:16:\"content_from_pid\";N;s:6:\"target\";N;s:13:\"cache_timeout\";N;s:10:\"cache_tags\";N;s:11:\"is_siteroot\";N;s:9:\"no_search\";N;s:13:\"php_tree_stop\";N;s:6:\"module\";N;s:5:\"media\";N;s:17:\"tsconfig_includes\";N;s:8:\"TSconfig\";N;s:8:\"l18n_cfg\";N;s:6:\"hidden\";N;s:8:\"nav_hide\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:16:\"extendToSubpages\";N;s:8:\"fe_group\";N;s:13:\"fe_login_mode\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,0,0,0,0,0,1,10,31,27,0,'Status','/status',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,0,0,'','','',0,49,'',0,0,'','',0,'','',0,'',0,0.5,'',''),(99,98,1628603526,1628603526,1,0,0,0,0,'',256,'',0,0,0,0,NULL,0,'a:1:{s:5:\"title\";N;}',0,0,0,0,0,0,0,1,10,31,27,0,'Detail','/status/details',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',1,0,0,0,0,0,'','','',0,51,'',0,0,'','',0,'','',0,'',0,0.5,'',''),(105,85,1628603526,1628603526,1,0,0,0,0,'',128,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,25,0,'Demo','/demo',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1658949210,'','',0,'','','',0,0,0,0,0,0,'','','',0,24,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(106,85,1628603526,1628603526,1,0,0,0,0,'',64,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,25,0,'Das Projekt','/das-projekt',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,0,'','',0,'','','',0,0,0,0,0,0,'','','',0,25,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(111,106,1628603526,1628603526,1,0,0,0,0,'',16,NULL,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,1,10,31,31,0,'Was ist der DFG-Viewer?','/das-projekt/was-ist-der-dfg-viewer',1,'',0,0,'',0,0,'',0,'',0,0,'',0,'',0,'',0,1628603526,'','',0,'','','',0,0,0,0,0,0,'0','0','',0,30,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(112,85,1658921465,1658921456,1,0,0,0,0,'',544,NULL,0,1,89,89,'{\"starttime\":\"parent\",\"endtime\":\"parent\",\"nav_hide\":\"parent\",\"url\":\"parent\",\"lastUpdated\":\"parent\",\"newUntil\":\"parent\",\"no_search\":\"parent\",\"shortcut\":\"parent\",\"shortcut_mode\":\"parent\",\"content_from_pid\":\"parent\",\"author\":\"parent\",\"author_email\":\"parent\",\"media\":\"parent\",\"og_image\":\"parent\",\"twitter_image\":\"parent\"}',0,'a:37:{s:7:\"doktype\";i:1;s:5:\"title\";s:6:\"Viewer\";s:4:\"slug\";s:5:\"/show\";s:9:\"nav_title\";s:0:\"\";s:8:\"subtitle\";s:0:\"\";s:9:\"seo_title\";s:0:\"\";s:8:\"og_title\";s:0:\"\";s:14:\"og_description\";N;s:13:\"twitter_title\";s:0:\"\";s:19:\"twitter_description\";N;s:8:\"abstract\";s:0:\"\";s:8:\"keywords\";s:0:\"\";s:11:\"description\";s:0:\"\";s:6:\"hidden\";i:0;s:10:\"categories\";i:0;s:14:\"rowDescription\";N;s:8:\"TSconfig\";s:0:\"\";s:13:\"php_tree_stop\";i:0;s:8:\"editlock\";i:0;s:6:\"layout\";i:0;s:8:\"fe_group\";s:0:\"\";s:16:\"extendToSubpages\";i:0;s:6:\"target\";s:0:\"\";s:5:\"alias\";s:0:\"\";s:13:\"cache_timeout\";i:900;s:10:\"cache_tags\";s:0:\"\";s:9:\"mount_pid\";i:0;s:11:\"is_siteroot\";i:0;s:12:\"mount_pid_ol\";i:0;s:6:\"module\";s:0:\"\";s:13:\"fe_login_mode\";i:0;s:8:\"l18n_cfg\";i:0;s:14:\"backend_layout\";s:0:\"\";s:25:\"backend_layout_next_level\";s:0:\"\";s:17:\"tsconfig_includes\";s:0:\"\";s:8:\"no_index\";i:1;s:9:\"no_follow\";i:1;}',0,0,0,0,0,0,0,1,10,31,27,0,'Viewer','/show',1,'',0,0,'',0,0,'',0,'',0,0,NULL,900,'',0,NULL,0,1658921465,NULL,'',0,'','','',1,0,0,0,0,0,'','','',0,0,'',1,1,'',NULL,0,'',NULL,0,'',0,0.5,'',''),(113,85,1658921506,1658921493,1,0,0,0,0,'',640,NULL,0,1,87,87,'{\"starttime\":\"parent\",\"endtime\":\"parent\",\"nav_hide\":\"parent\",\"url\":\"parent\",\"lastUpdated\":\"parent\",\"newUntil\":\"parent\",\"no_search\":\"parent\",\"shortcut\":\"parent\",\"shortcut_mode\":\"parent\",\"content_from_pid\":\"parent\",\"author\":\"parent\",\"author_email\":\"parent\",\"media\":\"parent\",\"og_image\":\"parent\",\"twitter_image\":\"parent\"}',0,'a:27:{s:7:\"doktype\";i:254;s:5:\"title\";s:20:\"Kitodo Configuration\";s:4:\"slug\";s:23:\"/kitodo-configuration-1\";s:6:\"hidden\";i:0;s:10:\"categories\";i:0;s:14:\"rowDescription\";N;s:8:\"TSconfig\";s:0:\"\";s:13:\"php_tree_stop\";i:0;s:8:\"editlock\";i:0;s:6:\"layout\";i:0;s:8:\"fe_group\";s:0:\"\";s:16:\"extendToSubpages\";i:0;s:6:\"target\";s:0:\"\";s:5:\"alias\";s:0:\"\";s:13:\"cache_timeout\";i:0;s:10:\"cache_tags\";s:0:\"\";s:9:\"mount_pid\";i:0;s:11:\"is_siteroot\";i:0;s:12:\"mount_pid_ol\";i:0;s:6:\"module\";s:0:\"\";s:13:\"fe_login_mode\";i:0;s:8:\"l18n_cfg\";i:0;s:14:\"backend_layout\";s:0:\"\";s:25:\"backend_layout_next_level\";s:0:\"\";s:17:\"tsconfig_includes\";s:0:\"\";s:8:\"no_index\";i:0;s:9:\"no_follow\";i:0;}',0,0,0,0,0,0,0,1,10,31,27,0,'Kitodo Configuration (EN)','/kitodo-configuration-en',254,'',0,0,'',0,0,'',0,'',0,0,NULL,0,'',0,NULL,0,0,NULL,'',0,'','','',0,0,0,0,0,0,'','','',0,0,'',0,0,'',NULL,0,'',NULL,0,'',0,0.5,'','');
 /*!40000 ALTER TABLE `pages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -982,8 +929,6 @@ CREATE TABLE `sys_category` (
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `l10n_diffsource` mediumblob DEFAULT NULL,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -1019,7 +964,7 @@ CREATE TABLE `sys_category` (
 
 LOCK TABLES `sys_category` WRITE;
 /*!40000 ALTER TABLE `sys_category` DISABLE KEYS */;
-INSERT INTO `sys_category` VALUES (3,86,1628603526,1628603526,1,0,0,0,0,256,'',0,0,NULL,0,'a:1:{s:5:\"items\";N;}',0,0,'',0,0,0,0,0,0,'Changelog',0,5,'0',0,0,0,'','','','','','','changelog');
+INSERT INTO `sys_category` VALUES (3,86,1628603526,1628603526,1,0,0,0,0,256,'',0,0,NULL,0,'a:1:{s:5:\"items\";N;}',0,0,0,0,0,0,0,'Changelog',0,5,'0',0,0,0,'','','','','','','changelog');
 /*!40000 ALTER TABLE `sys_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1077,8 +1022,6 @@ CREATE TABLE `sys_collection` (
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `l10n_diffsource` mediumblob DEFAULT NULL,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -1130,39 +1073,6 @@ CREATE TABLE `sys_collection_entries` (
 LOCK TABLES `sys_collection_entries` WRITE;
 /*!40000 ALTER TABLE `sys_collection_entries` DISABLE KEYS */;
 /*!40000 ALTER TABLE `sys_collection_entries` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `sys_domain`
---
-
-DROP TABLE IF EXISTS `sys_domain`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sys_domain` (
-  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int(10) unsigned NOT NULL DEFAULT 0,
-  `tstamp` int(10) unsigned NOT NULL DEFAULT 0,
-  `crdate` int(10) unsigned NOT NULL DEFAULT 0,
-  `cruser_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `hidden` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `sorting` int(11) NOT NULL DEFAULT 0,
-  `domainName` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`uid`),
-  KEY `getSysDomain` (`hidden`),
-  KEY `getDomainStartPage` (`pid`,`hidden`,`domainName`(100)),
-  KEY `parent` (`pid`,`hidden`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `sys_domain`
---
-
-LOCK TABLES `sys_domain` WRITE;
-/*!40000 ALTER TABLE `sys_domain` DISABLE KEYS */;
-INSERT INTO `sys_domain` VALUES (3,85,1628603526,1628603526,1,0,256,'sdvtypo3dfgviewer.slub-dresden.de');
-/*!40000 ALTER TABLE `sys_domain` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1235,8 +1145,6 @@ CREATE TABLE `sys_file_collection` (
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `l10n_diffsource` mediumblob DEFAULT NULL,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -1284,8 +1192,6 @@ CREATE TABLE `sys_file_metadata` (
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `l10n_diffsource` mediumblob DEFAULT NULL,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -1313,7 +1219,7 @@ CREATE TABLE `sys_file_metadata` (
 
 LOCK TABLES `sys_file_metadata` WRITE;
 /*!40000 ALTER TABLE `sys_file_metadata` DISABLE KEYS */;
-INSERT INTO `sys_file_metadata` VALUES (1,0,1616022451,1616022451,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,1,NULL,128,128,NULL,NULL,0),(2,0,1620388749,1620388749,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,2,NULL,0,0,NULL,NULL,0),(3,0,1620395218,1620392029,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,3,NULL,0,0,NULL,NULL,0),(4,0,1620395810,1620395810,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,4,NULL,0,0,NULL,NULL,0),(5,0,1628602075,1628602075,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,5,NULL,0,0,NULL,NULL,0),(6,0,1628602987,1628602987,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,6,NULL,0,0,NULL,NULL,0),(7,0,1628603215,1628603215,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,7,NULL,0,0,NULL,NULL,0),(8,0,1628603526,1568798380,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,8,NULL,0,0,NULL,NULL,0),(9,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,9,NULL,0,0,NULL,NULL,0),(10,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,10,NULL,0,0,NULL,NULL,0),(11,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,11,NULL,0,0,NULL,NULL,0),(12,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,12,NULL,0,0,NULL,NULL,0),(13,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,13,NULL,0,0,NULL,NULL,0),(14,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,14,NULL,0,0,NULL,NULL,0),(15,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,'',0,0,0,0,0,0,15,NULL,0,0,NULL,NULL,0),(16,0,1628603452,1628603451,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,16,NULL,0,0,NULL,NULL,0),(17,0,1628608433,1628608432,1,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,17,NULL,0,0,NULL,NULL,0);
+INSERT INTO `sys_file_metadata` VALUES (1,0,1616022451,1616022451,1,0,0,NULL,0,'',0,0,0,0,0,0,0,1,NULL,128,128,NULL,NULL,0),(2,0,1620388749,1620388749,1,0,0,NULL,0,'',0,0,0,0,0,0,0,2,NULL,0,0,NULL,NULL,0),(3,0,1620395218,1620392029,1,0,0,NULL,0,'',0,0,0,0,0,0,0,3,NULL,0,0,NULL,NULL,0),(4,0,1620395810,1620395810,1,0,0,NULL,0,'',0,0,0,0,0,0,0,4,NULL,0,0,NULL,NULL,0),(5,0,1628602075,1628602075,1,0,0,NULL,0,'',0,0,0,0,0,0,0,5,NULL,0,0,NULL,NULL,0),(6,0,1628602987,1628602987,1,0,0,NULL,0,'',0,0,0,0,0,0,0,6,NULL,0,0,NULL,NULL,0),(7,0,1628603215,1628603215,1,0,0,NULL,0,'',0,0,0,0,0,0,0,7,NULL,0,0,NULL,NULL,0),(8,0,1628603526,1568798380,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,8,NULL,0,0,NULL,NULL,0),(9,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,9,NULL,0,0,NULL,NULL,0),(10,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,10,NULL,0,0,NULL,NULL,0),(11,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,11,NULL,0,0,NULL,NULL,0),(12,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,12,NULL,0,0,NULL,NULL,0),(13,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,13,NULL,0,0,NULL,NULL,0),(14,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,14,NULL,0,0,NULL,NULL,0),(15,0,1628603526,1594996934,1,0,0,NULL,0,'a:1:{s:4:\"file\";N;}',0,0,0,0,0,0,0,15,NULL,0,0,NULL,NULL,0),(16,0,1628603452,1628603451,1,0,0,NULL,0,'',0,0,0,0,0,0,0,16,NULL,0,0,NULL,NULL,0),(17,0,1628608433,1628608432,1,0,0,NULL,0,'',0,0,0,0,0,0,0,17,NULL,0,0,NULL,NULL,0);
 /*!40000 ALTER TABLE `sys_file_metadata` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1339,6 +1245,7 @@ CREATE TABLE `sys_file_processedfile` (
   `checksum` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `width` int(11) DEFAULT 0,
   `height` int(11) DEFAULT 0,
+  `processing_url` text COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`uid`),
   KEY `combined_1` (`original`,`task_type`(100),`configurationsha1`),
   KEY `identifier` (`storage`,`identifier`(180))
@@ -1374,8 +1281,6 @@ CREATE TABLE `sys_file_reference` (
   `l10n_state` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `l10n_diffsource` mediumblob DEFAULT NULL,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -1497,7 +1402,6 @@ DROP TABLE IF EXISTS `sys_history`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sys_history` (
   `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int(10) unsigned NOT NULL DEFAULT 0,
   `tstamp` int(10) unsigned NOT NULL DEFAULT 0,
   `actiontype` smallint(6) NOT NULL DEFAULT 0,
   `usertype` varchar(2) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'BE',
@@ -1507,10 +1411,10 @@ CREATE TABLE `sys_history` (
   `tablename` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `history_data` mediumtext COLLATE utf8_unicode_ci DEFAULT NULL,
   `workspace` int(11) DEFAULT 0,
+  `correlation_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`uid`),
   KEY `recordident_1` (`tablename`(100),`recuid`),
-  KEY `recordident_2` (`tablename`(100),`tstamp`),
-  KEY `parent` (`pid`)
+  KEY `recordident_2` (`tablename`(100),`tstamp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1539,7 +1443,6 @@ CREATE TABLE `sys_language` (
   `title` varchar(80) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `flag` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `language_isocode` varchar(2) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `static_lang_isocode` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`uid`),
   KEY `parent` (`pid`,`hidden`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -1551,7 +1454,7 @@ CREATE TABLE `sys_language` (
 
 LOCK TABLES `sys_language` WRITE;
 /*!40000 ALTER TABLE `sys_language` DISABLE KEYS */;
-INSERT INTO `sys_language` VALUES (1,0,1620399664,0,256,'Englisch','gb','en',0);
+INSERT INTO `sys_language` VALUES (1,0,1620399664,0,256,'Englisch','gb','en');
 /*!40000 ALTER TABLE `sys_language` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1622,7 +1525,8 @@ CREATE TABLE `sys_log` (
   KEY `user_auth` (`type`,`action`,`tstamp`),
   KEY `request` (`request_id`),
   KEY `combined_1` (`tstamp`,`type`,`userid`),
-  KEY `parent` (`pid`)
+  KEY `parent` (`pid`),
+  KEY `errorcount` (`tstamp`,`error`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1796,7 +1700,7 @@ CREATE TABLE `sys_registry` (
   `entry_value` mediumblob DEFAULT NULL,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `entry_identifier` (`entry_namespace`,`entry_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1805,7 +1709,7 @@ CREATE TABLE `sys_registry` (
 
 LOCK TABLES `sys_registry` WRITE;
 /*!40000 ALTER TABLE `sys_registry` DISABLE KEYS */;
-INSERT INTO `sys_registry` VALUES (1,'installUpdate','TYPO3\\CMS\\Form\\Hooks\\FormFileExtensionUpdate','i:1;'),(2,'installUpdate','TYPO3\\CMS\\Install\\Updates\\WizardDoneToRegistry','i:1;'),(3,'installUpdate','TYPO3\\CMS\\Install\\Updates\\StartModuleUpdate','i:1;'),(4,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FrontendUserImageUpdateWizard','i:1;'),(5,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FillTranslationSourceField','i:1;'),(6,'installUpdate','TYPO3\\CMS\\Install\\Updates\\SectionFrameToFrameClassUpdate','i:1;'),(7,'installUpdate','TYPO3\\CMS\\Install\\Updates\\SplitMenusUpdate','i:1;'),(8,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BulletContentElementUpdate','i:1;'),(9,'installUpdate','TYPO3\\CMS\\Install\\Updates\\UploadContentElementUpdate','i:1;'),(10,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigrateFscStaticTemplateUpdate','i:1;'),(11,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FileReferenceUpdate','i:1;'),(12,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigrateFeSessionDataUpdate','i:1;'),(13,'installUpdate','TYPO3\\CMS\\Install\\Updates\\Compatibility7ExtractionUpdate','i:1;'),(14,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FormLegacyExtractionUpdate','i:1;'),(15,'installUpdate','TYPO3\\CMS\\Install\\Updates\\RteHtmlAreaExtractionUpdate','i:1;'),(16,'installUpdate','TYPO3\\CMS\\Install\\Updates\\LanguageSortingUpdate','i:1;'),(17,'installUpdate','TYPO3\\CMS\\Install\\Updates\\Typo3DbExtractionUpdate','i:1;'),(18,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FuncExtractionUpdate','i:1;'),(19,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigrateUrlTypesInPagesUpdate','i:1;'),(20,'installUpdate','TYPO3\\CMS\\Install\\Updates\\RedirectExtractionUpdate','i:1;'),(21,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BackendUserStartModuleUpdate','i:1;'),(22,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigratePagesLanguageOverlayUpdate','i:1;'),(23,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigratePagesLanguageOverlayBeGroupsAccessRights','i:1;'),(24,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BackendLayoutIconUpdateWizard','i:1;'),(25,'installUpdate','TYPO3\\CMS\\Install\\Updates\\RedirectsExtensionUpdate','i:1;'),(26,'installUpdate','TYPO3\\CMS\\Install\\Updates\\AdminPanelInstall','i:1;'),(27,'installUpdate','TYPO3\\CMS\\Install\\Updates\\PopulatePageSlugs','i:1;'),(28,'installUpdate','TYPO3\\CMS\\Install\\Updates\\Argon2iPasswordHashes','i:1;'),(29,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BackendUserConfigurationUpdate','i:1;'),(30,'installUpdateRows','rowUpdatersDone','a:3:{i:0;s:52:\"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\L10nModeUpdater\";i:1;s:53:\"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\ImageCropUpdater\";i:2;s:57:\"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\RteLinkSyntaxUpdater\";}'),(31,'core','formProtectionSessionToken:1',NULL),(32,'languagePacks','baseUrl','s:44:\"https://extensions.typo3.org/fileadmin/l10n/\";'),(33,'languagePacks','de','i:1616021040;'),(34,'extensionDataImport','typo3conf/ext/dlf/ext_tables_static+adt.sql','s:0:\"\";'),(37,'extensionDataImport','typo3conf/ext/news/ext_tables_static+adt.sql','s:0:\"\";'),(38,'extensionDataImport','typo3conf/ext/lfeditor/ext_tables_static+adt.sql','s:0:\"\";'),(39,'extensionDataImport','typo3conf/ext/dfgviewer/ext_tables_static+adt.sql','s:0:\"\";'),(41,'extensionDataImport','typo3conf/ext/dfgviewer/Initialisation/dataImported','i:1;'),(42,'tx_scheduler','lastRun','a:3:{s:5:\"start\";i:1645107723;s:3:\"end\";i:1645107723;s:4:\"type\";s:6:\"manual\";}');
+INSERT INTO `sys_registry` VALUES (1,'installUpdate','TYPO3\\CMS\\Form\\Hooks\\FormFileExtensionUpdate','i:1;'),(2,'installUpdate','TYPO3\\CMS\\Install\\Updates\\WizardDoneToRegistry','i:1;'),(3,'installUpdate','TYPO3\\CMS\\Install\\Updates\\StartModuleUpdate','i:1;'),(4,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FrontendUserImageUpdateWizard','i:1;'),(5,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FillTranslationSourceField','i:1;'),(6,'installUpdate','TYPO3\\CMS\\Install\\Updates\\SectionFrameToFrameClassUpdate','i:1;'),(7,'installUpdate','TYPO3\\CMS\\Install\\Updates\\SplitMenusUpdate','i:1;'),(8,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BulletContentElementUpdate','i:1;'),(9,'installUpdate','TYPO3\\CMS\\Install\\Updates\\UploadContentElementUpdate','i:1;'),(10,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigrateFscStaticTemplateUpdate','i:1;'),(11,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FileReferenceUpdate','i:1;'),(12,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigrateFeSessionDataUpdate','i:1;'),(13,'installUpdate','TYPO3\\CMS\\Install\\Updates\\Compatibility7ExtractionUpdate','i:1;'),(14,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FormLegacyExtractionUpdate','i:1;'),(15,'installUpdate','TYPO3\\CMS\\Install\\Updates\\RteHtmlAreaExtractionUpdate','i:1;'),(16,'installUpdate','TYPO3\\CMS\\Install\\Updates\\LanguageSortingUpdate','i:1;'),(17,'installUpdate','TYPO3\\CMS\\Install\\Updates\\Typo3DbExtractionUpdate','i:1;'),(18,'installUpdate','TYPO3\\CMS\\Install\\Updates\\FuncExtractionUpdate','i:1;'),(19,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigrateUrlTypesInPagesUpdate','i:1;'),(20,'installUpdate','TYPO3\\CMS\\Install\\Updates\\RedirectExtractionUpdate','i:1;'),(21,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BackendUserStartModuleUpdate','i:1;'),(22,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigratePagesLanguageOverlayUpdate','i:1;'),(23,'installUpdate','TYPO3\\CMS\\Install\\Updates\\MigratePagesLanguageOverlayBeGroupsAccessRights','i:1;'),(24,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BackendLayoutIconUpdateWizard','i:1;'),(25,'installUpdate','TYPO3\\CMS\\Install\\Updates\\RedirectsExtensionUpdate','i:1;'),(26,'installUpdate','TYPO3\\CMS\\Install\\Updates\\AdminPanelInstall','i:1;'),(27,'installUpdate','TYPO3\\CMS\\Install\\Updates\\PopulatePageSlugs','i:1;'),(28,'installUpdate','TYPO3\\CMS\\Install\\Updates\\Argon2iPasswordHashes','i:1;'),(29,'installUpdate','TYPO3\\CMS\\Install\\Updates\\BackendUserConfigurationUpdate','i:1;'),(30,'installUpdateRows','rowUpdatersDone','a:4:{i:0;s:52:\"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\L10nModeUpdater\";i:1;s:53:\"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\ImageCropUpdater\";i:2;s:57:\"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\RteLinkSyntaxUpdater\";i:3;s:69:\"TYPO3\\CMS\\Install\\Updates\\RowUpdater\\WorkspaceVersionRecordsMigration\";}'),(31,'core','formProtectionSessionToken:1',NULL),(32,'languagePacks','baseUrl','s:44:\"https://extensions.typo3.org/fileadmin/l10n/\";'),(33,'languagePacks','de','i:1616021040;'),(34,'extensionDataImport','typo3conf/ext/dlf/ext_tables_static+adt.sql','s:0:\"\";'),(37,'extensionDataImport','typo3conf/ext/news/ext_tables_static+adt.sql','s:0:\"\";'),(38,'extensionDataImport','typo3conf/ext/lfeditor/ext_tables_static+adt.sql','s:0:\"\";'),(39,'extensionDataImport','typo3conf/ext/dfgviewer/ext_tables_static+adt.sql','s:0:\"\";'),(41,'extensionDataImport','typo3conf/ext/dfgviewer/Initialisation/dataImported','i:1;'),(42,'tx_scheduler','lastRun','a:3:{s:5:\"start\";i:1645107723;s:3:\"end\";i:1645107723;s:4:\"type\";s:6:\"manual\";}'),(44,'installUpdate','TYPO3\\CMS\\Install\\Updates\\SvgFilesSanitization','i:1;');
 /*!40000 ALTER TABLE `sys_registry` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1830,8 +1734,6 @@ CREATE TABLE `sys_template` (
   `description` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -1845,7 +1747,6 @@ CREATE TABLE `sys_template` (
   `include_static_file` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `constants` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `config` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `nextLevel` varchar(5) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `basedOn` tinytext COLLATE utf8_unicode_ci DEFAULT NULL,
   `includeStaticAfterBasedOn` smallint(5) unsigned NOT NULL DEFAULT 0,
   `static_file_mode` smallint(5) unsigned NOT NULL DEFAULT 0,
@@ -1863,7 +1764,7 @@ CREATE TABLE `sys_template` (
 
 LOCK TABLES `sys_template` WRITE;
 /*!40000 ALTER TABLE `sys_template` DISABLE KEYS */;
-INSERT INTO `sys_template` VALUES (18,98,1628603526,1628603526,1,0,0,0,0,256,NULL,0,0,0,'',0,0,0,0,0,0,'+ext','',0,0,'','config.news.storagePid = 50\r\nconfig.news.listPid = 49\r\nconfig.news.detailPid = 51','plugin.tx_news.features.skipDefaultArguments = 0\nplugin.tx_news.settings.link.hrDate = 1','','',0,0,11),(19,94,1628603526,1628603526,1,0,0,0,0,256,'',0,0,0,'',0,0,0,0,0,0,'+ext Forms','',0,0,'EXT:form/Configuration/TypoScript/','','','','',0,0,8),(20,89,1628603526,1628603526,1,0,0,0,0,256,NULL,0,0,0,'',0,0,0,0,0,0,'+ext','',0,0,'',NULL,'# viewer does not run stable if cached\r\nconfig.no_cache=1\r\n','','',0,0,10),(21,85,1658918795,1628603526,1,0,0,0,0,256,'',0,0,0,'',0,0,0,0,0,0,'SLUB.DFGVIEWER','DFG-Viewer',1,3,'EXT:fluid_styled_content/Configuration/TypoScript/,EXT:news/Configuration/TypoScript,EXT:dlf/Configuration/TypoScript/,EXT:dfgviewer/Configuration/TypoScript','config.storagePid = 87\r\nconfig.rootPid = 85\r\nconfig.headNavPid = 93\r\nconfig.viewerNavPids = 30,28,17,18\r\nconfig.kitodoPageView = 89\r\nconfig.piwik_hostname = \r\nconfig.piwik_idsite = \r\nconfig.piwik_domains = \r\n','# set same piwik code as in master template...\r\n#config.disableWrapInBaseClass=1\r\n\r\nconfig.contentObjectExceptionHandler = 0\r\n','','',0,0,9);
+INSERT INTO `sys_template` VALUES (18,98,1628603526,1628603526,1,0,0,0,0,256,NULL,0,0,0,0,0,0,0,0,'+ext','',0,0,'','config.news.storagePid = 50\r\nconfig.news.listPid = 49\r\nconfig.news.detailPid = 51','plugin.tx_news.features.skipDefaultArguments = 0\nplugin.tx_news.settings.link.hrDate = 1','',0,0,11),(19,94,1628603526,1628603526,1,0,0,0,0,256,'',0,0,0,0,0,0,0,0,'+ext Forms','',0,0,'EXT:form/Configuration/TypoScript/','','','',0,0,8),(20,89,1628603526,1628603526,1,0,0,0,0,256,NULL,0,0,0,0,0,0,0,0,'+ext','',0,0,'',NULL,'# viewer does not run stable if cached\r\nconfig.no_cache=1\r\n','',0,0,10),(21,85,1658918795,1628603526,1,0,0,0,0,256,'',0,0,0,0,0,0,0,0,'SLUB.DFGVIEWER','DFG-Viewer',1,3,'EXT:fluid_styled_content/Configuration/TypoScript/,EXT:news/Configuration/TypoScript,EXT:dlf/Configuration/TypoScript/,EXT:dfgviewer/Configuration/TypoScript','config.storagePid = 87\r\nconfig.rootPid = 85\r\nconfig.headNavPid = 93\r\nconfig.viewerNavPids = 30,28,17,18\r\nconfig.kitodoPageView = 89\r\nconfig.piwik_hostname = \r\nconfig.piwik_idsite = \r\nconfig.piwik_domains = \r\n','# set same piwik code as in master template...\r\n#config.disableWrapInBaseClass=1\r\n\r\nconfig.contentObjectExceptionHandler = 0\r\n','',0,0,9);
 /*!40000 ALTER TABLE `sys_template` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1895,8 +1796,6 @@ CREATE TABLE `tt_content` (
   `t3_origuid` int(10) unsigned NOT NULL DEFAULT 0,
   `l18n_diffsource` mediumblob DEFAULT NULL,
   `t3ver_oid` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `t3ver_label` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `t3ver_wsid` int(10) unsigned NOT NULL DEFAULT 0,
   `t3ver_state` smallint(6) NOT NULL DEFAULT 0,
   `t3ver_stage` int(11) NOT NULL DEFAULT 0,
@@ -1920,8 +1819,6 @@ CREATE TABLE `tt_content` (
   `layout` int(10) unsigned NOT NULL DEFAULT 0,
   `frame_class` varchar(60) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'default',
   `cols` int(10) unsigned NOT NULL DEFAULT 0,
-  `spaceBefore` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `spaceAfter` smallint(5) unsigned NOT NULL DEFAULT 0,
   `space_before_class` varchar(60) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `space_after_class` varchar(60) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `records` text COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -1936,7 +1833,7 @@ CREATE TABLE `tt_content` (
   `linkToTop` smallint(5) unsigned NOT NULL DEFAULT 0,
   `file_collections` text COLLATE utf8_unicode_ci DEFAULT NULL,
   `filelink_size` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `filelink_sorting` varchar(17) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `filelink_sorting` varchar(64) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `filelink_sorting_direction` varchar(4) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `target` varchar(30) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `date` int(10) unsigned NOT NULL DEFAULT 0,
@@ -1972,7 +1869,7 @@ CREATE TABLE `tt_content` (
 
 LOCK TABLES `tt_content` WRITE;
 /*!40000 ALTER TABLE `tt_content` DISABLE KEYS */;
-INSERT INTO `tt_content` VALUES (172,NULL,111,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,'',0,0,0,0,0,0,'text','','','Der DFG-Viewer ist die Referenzimplementierung für die Digitalisierungsstandards, die die <LINK http://www.dfg.de/ - external>Deutsche Forschungsgemeinschaft (DFG)</link> in ihren <LINK http://www.dfg.de/formulare/12_151/index.jsp - external>Praxisregeln &quot;Digitalisierung&quot;</link> jedem Projektnehmer als verpflichtend auferlegt. Dies sind insbesondere die Datenformate METS/MODS und METS/TEI sowie die Austauschschnittstelle OAI-PMH. Da es sich dabei jedoch gleichzeitig um international gebräuchliche Standards handelt, kann der DFG-Viewer auch von Projekten eingesetzt werden, die keine Förderung durch die DFG erfahren haben. Einzige Voraussetzung sind die <LINK 28>Einhaltung der genannten Standards</link> und die uneingeschränkte Erreichbarkeit der Digitalisate im Internet. Darüber hinaus muss ein Anbieter keine eigene Präsentationssoftware installieren oder betreiben. Das Angebot ist zudem für den Datenanbieter wie auch die Nutzer kostenfrei.\r\n<h3>Wie funktionierts?</h3>\r\nDie <LINK 27>Implementierung des DFG-Viewers</link> ist denkbar einfach: Beim Aufruf des DFG-Viewers wird ein Link auf die technische Kodierung des anzuzeigenden Digitalisats im <LINK 23>METS-Format</link> als URL-Parameter übergeben. Der Webdienst ruft die referenzierte METS-Datei daraufhin beim Anbieter ab und entnimmt ihr alle notwendigen Informationen für die Anzeige des Digitalisats und gegebenenfalls weitere Zusatzfunktionen. Da die Links auf die METS-Dateien in der Regel unveränderlich sind, können die resultierenden DFG-Viewer-Aufrufe problemlos auf Webseiten oder in Nachweissystemen wie z.B. Bibliothekskatalogen abgelegt werden, um Nutzern per Klick die Ansicht eines Digitalisats zu ermöglichen.\r\n<h3>Grundfunktionen</h3>\r\nDabei bietet der DFG-Viewer abhängig von der verfügbaren Datenqualität der METS-Datei und dem anzuzeigenden Dokumenttyp einen dynamischen Funktionsumfang. Mindestens kann der Nutzer im Digitalisat blättern, einen stufenlosen Zoom verwenden sowie zwischen einer Einzel- und Doppelseitenansicht (wahlweise im Vollbildmodus)&nbsp;umschalten. Außerdem erhält er einen Basissatz an Metadaten, die das Digitalisat beschreiben (i.d.R. Titel, Autor, Erscheinungsort und Erscheinungsdatum), sowie Angaben zum Anbieter des Digitalisats. Sind darüber hinaus weitere Angaben in der METS-Datei vorhanden, werden automatisch die folgenden Funktionen zusätzlich angeboten:\r\n<h3>Inhaltsverzeichnis</h3>\r\nVerfügt die METS-Datei über sogenannte <LINK 22>Strukturdaten</link>, also eine inhaltliche Gliederung des Digitalisats, zeigt der DFG-Viewer diese als Inhaltsverzeichnis an und erlaubt dem Nutzer, darüber im Digitalisat zu navigieren. Ist zudem die Paginierung erfasst, zeigt der DFG-Viewer sowohl im Inhaltsverzeichnis als auch der Seitenauswahl die entsprechenden Seitenzahlen an (bei Handschriften entsprechend der Foliierung auch die Blattzählung).\r\n<h3>Weitere Metadaten</h3>\r\nWurden neben den bibliographischen Titeldaten weitere deskriptive Metadaten (etwa Artikelüberschriften und -autoren) erfasst, so werden diese zusätzlich angezeigt, sobald der Nutzer die entsprechenden Strukturelemente öffnet. Die Anzeige erfolgt in einer ausklappbaren Box, so dass dem Nutzer überlassen bleibt, wie viel Platz er den Metadaten einräumen will.\r\nDie Metadaten können medientypabhängig sowohl im <LINK 23>MODS- wie auch im TEI-Format</link> kodiert werden. Während ersteres überwiegend für Druckwerke verwendet wird, ist letzteres für mittelalterliche und frühneuzeitliche Handschriften gebräuchlich.\r\n<h3>Permalinks und Download</h3>\r\nSofern der Datenanbieter für das Digitalisat Permalinks zur wissenschaftlichen Zitation zur Verfügung stellt und diese in der METS-Datei angegeben sind, zeigt auch der DFG-Viewer diese Referenzen an und erlaubt dem Nutzer somit die werks- und seitengenaue Adressierung des Digitalisats auch im wissenschaftlichen Kontext.\r\nWahlweise kann der Datenanbieter auch einen PDF-Download des Digitalisats (als ganzes Werk oder Einzelseiten) erlauben. Der DFG-Viewer zeigt in diesem Fall entsprechende Buttons an, über die der Download ausgelöst werden kann.\r\n<h3>Kalenderansicht</h3>\r\nInsbesondere Zeitungen, aber auch andere Periodika mit langem Erscheinungsverlauf werden klassischerweise chronologisch erschlossen und über eine Kalenderansicht präsentiert. Der DFG-Viewer erkennt solche Digitalisate anhand ihrer auf drei separate METS-Dateien verteilten&nbsp;chronologischen Struktur automatisch und bietet eine dreistufige Navigation über die Auswahl eines Jahrgangs, gefolgt von einer Übersicht des Erscheinungsverlauf innerhalb dieses Jahrgangs bis hin zur Anzeige einer konkreten Ausgabe. Natürlich ist auch die umgekehrte Navigation von der Ausgabe zum Jahrgang bzw. zur Übersicht des Gesamttitels jederzeit möglich. Innerhalb einer Ausgabe stehen dem Nutzer wiederum alle übrigen Funktionen des DFG-Viewers wie gewohnt zur Verfügung, inklusive einer möglichen weiteren inhaltlichen Untergliederung der Ausgabe anhand eines Inhaltsverzeichnisses.\r\n<h3>Volltexte</h3>\r\nLiegen für das Digitalisat Volltexte im ALTO-Format mit Wortkoordinaten vor, so können diese auch vom DFG-Viewer zur Anzeige gebracht werden. Dabei ermittelt der DFG-Viewer anhand der Wortkoordinaten und abhängig von der vom Nutzer gewählten Zoomstufe die exakte Position der Worte auf dem Scan. Wählt der Nutzer nun einen Bildausschnitt aus, wird der dort befindliche Text in einer separaten Ansicht eingeblendet und kann beispielsweise als Zitat einfach kopiert werden. Aber auch schwer erkennbare Textstellen oder etwa ungewohnte Frakturschriften können auf diese Weise flüssig gelesen werden.\r\nVerfügt der Datenanbieter darüber hinaus über einen Volltext-Index mit öffentlicher SRU-Schnittstelle, bietet der DFG-Viewer dem Nutzer sogar einen Suchschlitz zur Volltextrecherche an. Darüber kann der Nutzer wahlweise innerhalb des aktuellen Digitalisats oder sogar in größeren Beständen des Anbieters recherchieren. Die Ergebnisse werden wiederum direkt im DFG-Viewer angezeigt, so dass der Nutzer dazu nicht zwischen mehreren Systemen und Anbietern wechseln muss.\r\n<h3>Nachhaltigkeit</h3>\r\nDie Entwicklung des DFG-Viewers wurde und wird von der DFG gefördert, während die <LINK http://www.slub-dresden.de/ - external>SLUB Dresden</link> in Eigenleistung den dauerhaften Betrieb in einem leistungsfähigen Server-Cluster gewährleistet. Auch der Quellcode des DFG-Viewers ist frei und kann unter der Open Source-Lizenz GPL3 auf <LINK https://github.com/slub/dfg-viewer - external>GitHub</link> bezogen und kostenfrei&nbsp;nachgenutzt werden. Über die Plattform können auch eigene Weiterentwicklungen in das Projekt eingebracht werden.',0,0,0,0,0,0,0,1,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,1,0,0),(181,NULL,106,1628603526,1628603526,1,0,0,0,0,'',256,0,1,182,0,NULL,1,'a:4:{s:11:\"l18n_parent\";N;s:9:\"starttime\";i:0;s:7:\"endtime\";i:0;s:11:\"pi_flexform\";s:3927:\"<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"what_to_display\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listOrderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"ascDesc\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"categoryMode\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"categorySelection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"useSubCategories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"archive\">\n                    <value index=\"vDEF\">-1</value>\n                </field>\n                <field index=\"pages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_template\">\n            <language index=\"lDEF\">\n                <field index=\"template_file\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"alternatingLayouts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"croppingLenght\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_category\">\n            <language index=\"lDEF\">\n                <field index=\"catImageMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatImages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catTextMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatTexts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_misc\">\n            <language index=\"lDEF\">\n                <field index=\"PIDitemDisplay\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"firstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"forceFirstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"listStartId\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listLimit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"noPageBrowser\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"maxWordsInSingleView\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>\";}',0,0,'',0,0,0,0,0,0,'text','','','The <LINK 25 - - \"Start the demonstrator!\"><i><acronym title=\"(dt.) Deutsche Forschungsgemeinschaft; (engl.) German Research Foundation\">DFG</acronym> Viewer</i></link> is a browser web service for displaying digital representations from decentralised library repositories. It has an <acronym title=\"extensible markup language\">XML</acronym> interface for exchanging meta- and structural data in the <LINK 23 - - \"metadata encoding and transmission standard\"><acronym title=\"metadata encoding and transmission standard\">METS</acronym>/<acronym title=\"metadata object description schema\">MODS</acronym> and <acronym title=\"metadata encoding and transmission standard\">METS</acronym>/<acronym title=\"text encoding initiative\">TEI</acronym> format</link>. Displaying of a digital representation is enriched and supplemented with additional functions, if applicable, with the help of these data.\r\nAs a result, users are provided with a uniform interface for viewing digitised media. They can browse documents, view and download the individual digital representations in various resolutions and switch to the respective web presentation of the library involved upon a request to that end in order to use further possibilities there.\r\nThe <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym> Viewer</i> is based on the free <acronym title=\"content management system\">CMS</acronym> <LINK http://www.typo3.org/ - - TYPO3>TYPO3</link>&nbsp;as well as the open source digitization software <LINK http://www.goobi.org/en/ - external>Goobi</link>&nbsp;and can be used free of charge by anyone interested. This can either be done centrally via the web service operated here or by means of a local implementation. In this context, connection is optionally provided via a native <acronym title=\"extensible markup language\">XML</acronym> interface or via the standardised <acronym title=\"open archives initiative\">OAI</acronym> protocol. You can find comprehensive documentations, examples and useful tips regarding both application scenarios there.\r\n<p class=\"abstract\"><span class=\"information\">Moreover, this web service is intended to start a <LINK 14>discussion</link> regarding metadata standards for mass digitisation projects sponsored by <acronym title=\"(dt.) Deutsche Forschungsgemeinschaft; (engl.) German Research Foundation\">DFG</acronym> and their applicability, which should be as broad as possible, and to put the sample application, such as the <i>Viewer</i>, to the test.</span></p>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"what_to_display\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listOrderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"ascDesc\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"categoryMode\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"categorySelection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"useSubCategories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"archive\">\n                    <value index=\"vDEF\">-1</value>\n                </field>\n                <field index=\"pages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_template\">\n            <language index=\"lDEF\">\n                <field index=\"template_file\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"alternatingLayouts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"croppingLenght\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_category\">\n            <language index=\"lDEF\">\n                <field index=\"catImageMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatImages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catTextMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatTexts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_misc\">\n            <language index=\"lDEF\">\n                <field index=\"PIDitemDisplay\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"firstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"forceFirstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"listStartId\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listLimit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"noPageBrowser\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"maxWordsInSingleView\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,0,0,0,0,10,0,0),(182,NULL,106,1628603526,1628603526,1,0,0,0,0,'',128,0,0,0,0,NULL,0,'a:1:{s:11:\"pi_flexform\";N;}',0,0,'',0,0,0,0,0,0,'text','','','Der <LINK 25><i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewer</i></link> ist ein Browser-Webdienst zur Anzeige von Digitalisaten aus dezentralen Bibliotheksrepositorien. Er verfügt über eine <acronym title=\"(engl.) open archives initiative protocol for metadata harvesting; (dt.) Protokoll zur Metadatensammlung der Initiative zum freien Datenaustausch\">OAI-PMH</acronym>-Schnittstelle zum Austausch von Meta- und Strukturdaten im <LINK 23><acronym title=\"(engl.) metadata encoding and transmission standard; (dt.) Metadatenkodierungs- und -übertragungsstandard\">METS</acronym>/<acronym title=\"(engl.) metadata object description schema; (dt.) Schema zur Beschreibung von Objektmetadaten\">MODS</acronym>- und <acronym title=\"(engl.) metadata encoding and transmission standard; (dt.) Metadatenkodierungs- und -übertragungsstandard\">METS</acronym>/<acronym title=\"(engl.) text encoding initiative; (dt.) Textkodierungsinitiative\">TEI</acronym>-Format</link>. Mit Hilfe dieser Daten wird die Anzeige eines Digitalisats angereichert und gegebenenfalls um zusätzliche Funktionen ergänzt.\r\nBenutzer finden somit eine vereinheitlichte Oberfläche zur Ansicht von digitalisierten Medien vor. Sie können in einem Werk blättern, die einzelnen Digitalisate in mehreren Auflösungen betrachten und herunterladen sowie auf Wunsch zur jeweiligen Webpräsentation der beteiligten Bibliothek wechseln, um dort weitergehende Möglichkeiten zu nutzen.\r\nDer <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewer</i> basiert auf dem freien <acronym title=\"(engl.) content management system; (dt.) Redaktionssystem\">CMS</acronym> <LINK http://www.typo3.org/ - external TYPO3>TYPO3</link>&nbsp;sowie der quelloffenen Digitalisierungssoftware <LINK http://kitodo.org - external>Kitodo</link>&nbsp;und kann von jedem Interessierten kostenlos genutzt werden. Dies kann entweder zentral über den hier laufenden Webdienst erfolgen oder durch eine lokale Implementierung. Die Anbindung erfolgt dabei wahlweise über eine native <acronym title=\"(engl.) extensible markup language; (dt.) erweiterbare Auszeichnungssprache\">XML</acronym>-Schnittstelle oder über das standardisierte <acronym title=\"(engl.) open archives initiative; (dt.) Initiative zum freien Datenaustausch\">OAI</acronym>-Protokoll. Hier finden Sie zu beiden Anwendungsszenarien ausführliche Dokumentationen, Beispiele und hilfreiche Tipps.\r\nEine ausführlichere Beschreibung der Funktionen und Möglichkeiten des DFG-Viewers finden Sie auf der <LINK 31>entsprechenden Unterseite</link>.\r\n<p class=\"abstract\"><span class=\"information\">Dieses Webangebot soll zudem eine möglichst breite <LINK 14>Diskussion</link> über Metadatenstandards für <acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-geförderte Massendigitalisierungsprojekte und ihre Anwendbarkeit anregen sowie Musterapplikation wie den <i>Viewer</i> erproben.</span></p>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"what_to_display\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listOrderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"ascDesc\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"categoryMode\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"categorySelection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"useSubCategories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"archive\">\n                    <value index=\"vDEF\">-1</value>\n                </field>\n                <field index=\"pages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_template\">\n            <language index=\"lDEF\">\n                <field index=\"template_file\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"alternatingLayouts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"croppingLenght\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_category\">\n            <language index=\"lDEF\">\n                <field index=\"catImageMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatImages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catTextMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatTexts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_misc\">\n            <language index=\"lDEF\">\n                <field index=\"PIDitemDisplay\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"firstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"forceFirstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"listStartId\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listLimit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"noPageBrowser\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"maxWordsInSingleView\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,0,0,0,0,11,0,0),(183,NULL,105,1658949210,1628603526,1,0,0,0,0,'',256,0,0,186,0,NULL,259,'a:18:{s:5:\"CType\";N;s:6:\"colPos\";N;s:6:\"header\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"frame_class\";N;s:18:\"space_before_class\";N;s:17:\"space_after_class\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:16:\"sys_language_uid\";N;s:6:\"hidden\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,'',0,0,0,0,0,0,'html','','','<script type=\"text/javascript\">\r\n/* <![CDATA[ */\r\nfunction DFGVIEWER_resolveDemoLink() {\r\nbaseUrls = new Object();\r\nbaseUrls[\"slub\"] = \"http://digital.slub-dresden.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"hab\"] = \"http://dbs.hab.de/oai/wdb?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"ulb\"] = \"http://digitale.bibliothek.uni-halle.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"bsb\"] = \"http://daten.digitale-sammlungen.de/~db/mets/\";\r\nbaseUrls[\"sub\"] = \"http://gdz.sub.uni-goettingen.de/mets_export.php?PPN=\";\r\ndocument.getElementById(\"mets\").value = baseUrls[document.getElementById(\"org\").value] + document.getElementById(\"id\").value;\r\nif(document.getElementById(\"org\").value==\"bsb\") { document.getElementById(\"mets\").value = document.getElementById(\"mets\").value + \"_mets.xml\"; }\r\nreturn true;\r\n}\r\n/* ]]> */\r\n</script>\r\n<div class=\"abstract\">\r\n<noscript><p><strong>Bitte aktivieren Sie Javascript, um diese Funktion nutzen zu können!</strong></p></noscript>\r\n<div class=\"example\">\r\n<h4>Beispiele</h4>\r\n<p><strong><acronym title=\"Sächsische Landesbibliothek - Staats- und Universitätsbibliothek\">SLUB</acronym> Dresden</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-263566811</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-274591448</a><br />\r\n<strong><acronym title=\"Herzog August Bibliothek\">HAB</acronym> Wolfenbüttel</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549837965</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549836969</a><br />\r\n<strong><acronym title=\"Universitäts- und Landesbibliothek\">ULB</acronym> Halle</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">94835</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">9834</a><br />\r\n<strong><acronym title=\"Bayerische Staatsbibliothek\">BSB</acronym> München</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020619</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020956</a><br />\r\n<strong><acronym title=\"Staats- und Universitätsbibliothek\">SUB</acronym> Göttingen</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574841571</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574578609</a></p>\r\n</div>\r\n<form method=\"get\" action=\"/show/\" onsubmit=\"return DFGVIEWER_resolveDemoLink();\"><div>\r\n<label for=\"id\">Identifikator</label><br />\r\n<input type=\"text\" class=\"text\" value=\"\" id=\"id\" required=\"required\" /><br />\r\n<label for=\"org\">Bibliothek</label><br />\r\n<select id=\"org\"><option value=\"slub\" selected=\"selected\">SLUB Dresden</option><option value=\"hab\">HAB Wolfenbüttel</option><option value=\"ulb\">ULB Halle</option><option value=\"bsb\">BSB München</option><option value=\"sub\">SUB Göttingen</option></select><br />\r\n<input type=\"hidden\" name=\"tx_dlf[id]\" id=\"mets\" value=\"\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Demonstrator aufrufen!\" />\r\n</div></form>\r\n<br style=\"clear:both;\" />\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,12,0,0),(184,NULL,105,1658949210,1628603526,1,0,0,0,0,'',128,0,1,183,0,NULL,0,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";i:0;s:7:\"endtime\";i:0;}',0,0,'',0,0,0,0,0,0,'html','','','<script type=\"text/javascript\">\r\n/* <![CDATA[ */\r\nfunction getLink() {\r\nbaseUrls = new Object();\r\nbaseUrls[\"slub\"] = \"http://digital.slub-dresden.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"hab\"] = \"http://dbs.hab.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"ulb\"] = \"http://digitale.bibliothek.uni-halle.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"bsb\"] = \"http://daten.digitale-sammlungen.de/~db/mets/\";\r\nbaseUrls[\"sub\"] = \"http://gdz.sub.uni-goettingen.de/mets_export.php?PPN=\";\r\ndocument.getElementById(\"mets\").value = baseUrls[document.getElementById(\"org\").value] + document.getElementById(\"id\").value;\r\nif(document.getElementById(\"org\").value==\"bsb\") { document.getElementById(\"mets\").value = document.getElementById(\"mets\").value + \"_mets.xml\"; }\r\nreturn true;\r\n}\r\n/* ]]> */\r\n</script>\r\n<div class=\"abstract\">\r\n<noscript><p><strong>This requires a browser that can handle javascript and has javacript enabled.</strong></p></noscript>\r\n<div class=\"example\">\r\n<h4>Examples</h4>\r\n<p><strong><acronym title=\"Sächsische Landesbibliothek - Staats- und Universitätsbibliothek\">SLUB</acronym> Dresden</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-263566811</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-274591448</a><br />\r\n<strong><acronym title=\"Herzog August Bibliothek\">HAB</acronym> Wolfenbüttel</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549837965</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549836969</a><br />\r\n<strong><acronym title=\"Universitäts- und Landesbibliothek\">ULB</acronym> Halle</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">94835</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">9834</a><br />\r\n<strong><acronym title=\"Bayerische Staatsbibliothek\">BSB</acronym> München</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020619</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020956</a><br />\r\n<strong><acronym title=\"Staats- und Universitätsbibliothek\">SUB</acronym> Göttingen</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574841571</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574578609</a></p>\r\n</div>\r\n<form method=\"get\" action=\"/show/\" onsubmit=\"return getLink();\"><div>\r\n<label for=\"id\">Identifier</label><br />\r\n<input type=\"text\" class=\"text\" value=\"\" id=\"id\" required=\"required\" /><br />\r\n<label for=\"org\">Library</label><br />\r\n<select id=\"org\"><option value=\"slub\" selected=\"selected\">SLUB Dresden</option><option value=\"hab\">HAB Wolfenbüttel</option><option value=\"ulb\">ULB Halle</option><option value=\"bsb\">BSB München</option><option value=\"sub\">SUB Göttingen</option></select><br />\r\n<input type=\"hidden\" name=\"tx_dlf[id]\" id=\"mets\" value=\"\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Call Demonstrator!\" />\r\n</div></form>\r\n<br style=\"clear:both;\" />\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,13,0,0),(185,NULL,105,1628603526,1628603526,1,0,0,0,0,'',64,0,1,186,0,NULL,259,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,'',0,0,0,0,0,0,'text','','','You can also look at works from the digitised stock of the project partners as examples by selecting or entering a corresponding identifier in the following form.',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,14,0,0),(186,NULL,105,1628603526,1628603526,1,0,0,0,0,'',32,0,0,0,0,NULL,0,'a:14:{s:5:\"CType\";N;s:16:\"sys_language_uid\";N;s:6:\"colPos\";N;s:11:\"spaceBefore\";N;s:10:\"spaceAfter\";N;s:13:\"section_frame\";N;s:12:\"sectionIndex\";N;s:6:\"hidden\";N;s:9:\"linkToTop\";N;s:8:\"bodytext\";N;s:11:\"rte_enabled\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;}',0,0,'',0,0,0,0,0,0,'text','','','Sie können sich auch exemplarisch Werke aus dem digitalisierten Bestand der Projektpartner anschauen, in dem Sie im folgenden Formular einen entsprechenden Identifikator auswählen oder eintragen.',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,15,0,0),(187,NULL,105,1628603526,1628603526,1,0,0,0,0,'',16,0,1,188,0,NULL,257,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,'',0,0,0,0,0,0,'html','','','<div class=\"abstract\">\r\n<form method=\"get\" action=\"/show/\"><div>\r\n<label for=\"mets\">Insert the link to your <acronym title=\"metadata encoding and transmission standard\">METS</acronym> file or <acronym title=\"open archives initiative\">OAI</acronym> interface here:</label><br />\r\n<input type=\"text\" class=\"url\" name=\"tx_dlf[id]\" value=\"\" /><br />\r\n<label for=\"debug\"><input id=\"debug\" type=\"checkbox\" name=\"set[debug]\" value=\"1\" disabled=\"disabled\" /> <strike>validation mode</strike> (temporarily unavailable)</label><br />\r\n<input type=\"hidden\" name=\"no_cache\" value=\"1\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Call Demonstrator!\" />\r\n</div></form>\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,16,0,0),(188,NULL,105,1628603526,1628603526,1,0,0,0,0,'',8,0,0,0,0,NULL,0,'a:15:{s:5:\"CType\";N;s:6:\"colPos\";N;s:16:\"sys_language_uid\";N;s:6:\"header\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"spaceBefore\";N;s:10:\"spaceAfter\";N;s:13:\"section_frame\";N;s:6:\"hidden\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;}',0,0,'',0,0,0,0,0,0,'html','','','<div class=\"abstract\">\r\n<form method=\"get\" action=\"/show/\"><div>\r\n<label for=\"mets\">Fügen Sie hier den Link zu Ihrer <acronym title=\"(engl.) metadata encoding and transmission standard; (dt.) Metadatenkodierungs- und -übertragungsstandard\">METS</acronym>-Datei bzw. <acronym title=\"(engl.) open archives initiative; (dt.) Initiative für freien Datenaustausch\">OAI</acronym>-Schnittstelle ein:</label><br />\r\n<input type=\"text\" class=\"url\" name=\"tx_dlf[id]\" value=\"\" /><br />\r\n<label for=\"debug\"><input id=\"debug\" type=\"checkbox\" name=\"set[debug]\" value=\"1\" disabled=\"disabled\" /> <strike>Validator-Modus aktivieren</strike> (vorübergehend nicht verfügbar)</label><br />\r\n<input type=\"hidden\" name=\"no_cache\" value=\"1\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Demonstrator aufrufen!\" />\r\n</div></form>\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,17,0,0),(189,NULL,105,1628603526,1628603526,1,0,0,0,0,'',4,0,1,191,0,NULL,0,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,'',0,0,0,0,0,0,'text','','','<span class=\"information\">Please do not use the demonstrator but&nbsp;the stable and persistent version specified under <LINK 27>notes regarding implementation</link> to employ the <em><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym> Viewer</em> in the productive environment.</span>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,18,0,0),(190,NULL,105,1628603526,1628603526,1,0,0,0,0,'',2,0,1,192,0,NULL,205,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,'',0,0,0,0,0,0,'text','','','The demonstrator presented here constitutes the respective most current stable version of the <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym> Viewer</i>.',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,19,0,0),(191,NULL,105,1628603526,1628603526,1,0,0,0,0,'',1,0,0,188,0,NULL,257,'a:1:{s:11:\"l18n_parent\";N;}',0,0,'',0,0,0,0,0,0,'text','','','<span class=\"information\">Um den <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewer</i> im produktiven Umfeld einzusetzen, verwenden Sie bitte nicht den Demonstrator, sondern die bei den <LINK 27>Hinweisen zur Implementierung</link> angegebene persistente Version.</span>',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,20,0,0),(192,NULL,105,1628603526,1628603526,1,0,0,0,0,'',0,0,0,0,0,NULL,0,'a:14:{s:5:\"CType\";N;s:16:\"sys_language_uid\";N;s:6:\"colPos\";N;s:11:\"spaceBefore\";N;s:10:\"spaceAfter\";N;s:13:\"section_frame\";N;s:12:\"sectionIndex\";N;s:6:\"hidden\";N;s:9:\"linkToTop\";N;s:8:\"bodytext\";N;s:11:\"rte_enabled\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;}',0,0,'',0,0,0,0,0,0,'text','','','Der hier präsentierte Demonstrator stellt jeweils die aktuellste stabile Version des <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewers</i> dar.',0,0,0,0,0,0,8,0,0,0,0,'default',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,21,0,0),(203,'',99,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:11:\"pi_flexform\";N;}',0,0,'',0,0,0,0,0,0,'list','','',NULL,0,0,0,0,0,0,0,2,0,0,0,'default',0,0,0,'','','','',0,'','',0,'3','news_pi1',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"settings.orderBy\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.orderDirection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.categoryConjunction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.categories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.includeSubCategories\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.archiveRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestrictionHigh\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.startingpoint\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.selectedList\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.singleNews\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.previewHiddenRecords\">\n                    <value index=\"vDEF\">2</value>\n                </field>\n                <field index=\"switchableControllerActions\">\n                    <value index=\"vDEF\">News-&gt;detail</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"additional\">\n            <language index=\"lDEF\">\n                <field index=\"settings.detailPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.listPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.backPid\">\n                    <value index=\"vDEF\">98</value>\n                </field>\n                <field index=\"settings.limit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.offset\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.tags\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.hidePagination\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.list.paginate.itemsPerPage\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsFirst\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.excludeAlreadyDisplayedNews\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.disableOverrideDemand\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"template\">\n            <language index=\"lDEF\">\n                <field index=\"settings.media.maxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.media.maxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.cropMaxCharacters\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.templateLayout\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,124,0,0,0,88,0,0),(204,'',98,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:11:\"pi_flexform\";N;}',0,0,'',0,0,0,0,0,0,'list','','',NULL,0,0,0,0,0,0,0,2,0,0,0,'default',0,0,0,'','','','',0,'','',0,'3','news_pi1',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"settings.orderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"settings.orderDirection\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"settings.categoryConjunction\">\n                    <value index=\"vDEF\">or</value>\n                </field>\n                <field index=\"settings.categories\">\n                    <value index=\"vDEF\">3</value>\n                </field>\n                <field index=\"settings.includeSubCategories\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.archiveRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestrictionHigh\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.startingpoint\">\n                    <value index=\"vDEF\">86</value>\n                </field>\n                <field index=\"settings.recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.selectedList\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"switchableControllerActions\">\n                    <value index=\"vDEF\">News-&gt;list</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"additional\">\n            <language index=\"lDEF\">\n                <field index=\"settings.detailPid\">\n                    <value index=\"vDEF\">99</value>\n                </field>\n                <field index=\"settings.listPid\">\n                    <value index=\"vDEF\">98</value>\n                </field>\n                <field index=\"settings.backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.limit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.offset\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.tags\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.hidePagination\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.list.paginate.itemsPerPage\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsFirst\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.excludeAlreadyDisplayedNews\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.disableOverrideDemand\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"template\">\n            <language index=\"lDEF\">\n                <field index=\"settings.media.maxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.media.maxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.cropMaxCharacters\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.templateLayout\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,124,0,0,0,87,0,0),(205,'',98,1628603526,1628603526,1,0,0,0,0,'',128,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,'',0,0,0,0,0,0,'text','','','<p>Auf dieser Seite dokumentieren wir Änderungen an der DFG-Viewer Webseite und am DFG-Viewer selbst. So können Sie nachvollziehen, ob kürzlich Änderungen vorgenommen wurden.</p>\r\n<p>Wenn Sie Fehler feststellen oder Verbesserungsvorschläge haben, können Sie uns auf den gewohnten Kanälen kontaktieren. Siehe Seite <a class=\"link-internal\" href=\"94\">Kontakt</a>.</p>',0,0,0,0,0,0,0,2,0,0,0,'default',0,0,0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,124,0,0,0,89,0,0),(250,NULL,85,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,'',0,0,0,0,0,0,'text','DFG-Viewer Mailingliste','','<p>Bleiben Sie steht informiert und tauschen Sie sich mit anderen Nutzern und den Entwicklern des DFG-Viewers zu aktuellen Themen und Trends aus.</p>\r\n<p><a class=\"more\" href=\"14\" title=\"Mehr dazu\">In Kontakt bleiben</a></p>',0,0,0,0,0,0,0,2,0,0,101,'mailinglist',0,0,0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,79,0,0),(251,NULL,85,1628608848,1628603526,1,0,0,0,0,'',128,0,0,0,0,NULL,0,'a:23:{s:5:\"CType\";N;s:6:\"colPos\";N;s:6:\"header\";N;s:13:\"header_layout\";N;s:15:\"header_position\";N;s:4:\"date\";N;s:11:\"header_link\";N;s:9:\"subheader\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"frame_class\";N;s:18:\"space_before_class\";N;s:17:\"space_after_class\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:16:\"sys_language_uid\";N;s:6:\"hidden\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,'',0,0,0,0,0,0,'text','METS, MODS, TEI. Metadaten des DFG-Viewers','','<p>Das verwendete Metadatenformat ist ausführlich dokumentiert und mit Beispielen versehen. Die beschriebene Minimalversion kann sehr leicht aus vorhandenen Metadaten anderer Formate erzeugt werden und genügt bereits, um den DFG-Viewer anzusprechen.</p>\r\n<p><a class=\"link-more\" href=\"t3://page?uid=104\">Mehr erfahren</a></p>',0,0,0,0,0,0,0,2,0,0,101,'metadata',0,0,0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,80,0,0),(252,NULL,85,1628603526,1628603526,1,0,0,0,0,'',64,0,0,0,0,NULL,0,'a:18:{s:5:\"CType\";N;s:6:\"colPos\";N;s:6:\"header\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"frame_class\";N;s:18:\"space_before_class\";N;s:17:\"space_after_class\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:16:\"sys_language_uid\";N;s:6:\"hidden\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,'',0,0,0,0,0,0,'html','DFG-Viewer Demonstrator','','<h3>DFG-Viewer Demonstrator</h3>\r\n<p>Sehen Sie hier zunächst drei Demonstrationen des DFG-Viewers mit ausgewählten Werken verschiedener Projektpartner.</p>\r\n                    <ul class=\"demo-list\">\r\n                        <li>\r\n                            <a href=\"/show/?tx_dlf%5Bid%5D=http%3A%2F%2Fdigital.slub-dresden.de%2Foai%2F%3Fverb%3DGetRecord%26metadataPrefix%3Dmets%26identifier%3Doai%3Ade%3Aslub-dresden%3Adb%3Aid-263566811\" title=\"\">\r\n                                <img src=\"/typo3conf/ext/dfgviewer/Resources/Public/Images/Demopages/demoSLUB.jpg\" alt=\"demoSLUB\">\r\n                                <span class=\"title\">Der furnembsten, notwendigsten, der gantzen Architectur angehoerigen Mathematischen und…</span>\r\n                                <span class=\"uid\">oai:de:slub-dresden:db:id-263566811</span>\r\n                                <span class=\"institute\">SLUB Dresden</span>\r\n                            </a>\r\n                        </li>\r\n                        <li>\r\n                            <a href=\"/show/?tx_dlf%5Bid%5D=http%3A%2F%2Fdaten.digitale-sammlungen.de%2F~db%2Fmets%2Fbsb00020619_mets.xml\" title=\"\">\r\n                                <img src=\"/typo3conf/ext/dfgviewer/Resources/Public/Images/Demopages/demoBSB.jpg\" alt=\"demoSLUB\">\r\n                                <span class=\"title\">Prima [- Undecima] pars librorum divi Aurelii Augustini…</span>\r\n                                <span class=\"uid\">bsb00020619</span>\r\n                                <span class=\"institute\">BSB München</span>\r\n                            </a>\r\n                        </li>\r\n                        <li>\r\n                            <a href=\"/show/?tx_dlf%5Bid%5D=http%3A%2F%2Fdbs.hab.de%2Foai%2Fwdb%3Fverb%3DGetRecord%26metadataPrefix%3Dmets%26identifier%3Doai%3Adiglib.hab.de%3Appn_549836969\" title=\"\">\r\n                                <img src=\"/typo3conf/ext/dfgviewer/Resources/Public/Images/Demopages/demoHAB.jpg\" alt=\"demoSLUB\">\r\n                                <span class=\"title\">Johannis Michaelis Dilherri, Franci, Disputationum Academicarum, praecipue Philologicarum, Tomus…</span>\r\n                                <span class=\"uid\">oai:diglib.hab.de:ppn_549836969</span>\r\n                                <span class=\"institute\">HAB Wolfenbüttel</span>\r\n                            </a>\r\n                        </li>\r\n                    </ul>\r\n                    <p><a href=\"/demo/\" title=\"Mehr dazu\" class=\"more\">Weitere Beispiele ansehen</a></p>',0,0,0,0,0,0,0,2,0,0,101,'demo',0,0,0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,81,0,0),(253,NULL,85,1628603526,1628603526,1,0,0,0,0,'',32,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,'',0,0,0,0,0,0,'text','','','<p>Der DFG-Viewer ist die Referenzimplementierung für die Digitalisierungsstandards der&nbsp;<a href=\"https://www.dfg.de/\" title=\"Deutsche Forschungsgemeinschaft (DFG)\">Deutschen Forschungsgemeinschaft (DFG)</a>. Das sind insbesondere die Datenformate METS/MODS und METS/TEI sowie die Austauschschnittstelle OAI-PMH.</p>\r\n<p>Das Angebot ist für den Datenanbieter wie auch die Nutzer kostenfrei.</p>\r\n<p><a class=\"more\" href=\"25\" title=\"Mehr dazu\">Mehr erfahren</a></p>',0,0,0,0,0,0,0,2,0,0,101,'mission',0,0,0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,82,0,0),(255,'',85,1645107681,1645107681,1,0,0,0,0,'',16,0,0,0,0,NULL,0,'',0,0,'',0,0,0,0,0,0,'text','DDEV Entwicklungssystem DFG-Viewer','','<p>Dies ist ein DDEV-Entwicklungssystem für die Entwicklung an der DFG-Viewer Webseite.</p>\r\n<p>Alle Inhalte in diesem System dienen nur der Entwicklung. Die maßgeblichen Inhalte finden Sie auf der DFG-Viewer Webseite.</p>\r\n<p>Nützliche Adressen:</p>\r\n<ul> 	<li>DFG-Viewer Extension:&nbsp;<a href=\"https://github.com/slub/dfg-viewer\">https://github.com/slub/dfg-viewer</a></li> 	<li>Kitodo.Presentation:&nbsp;<a href=\"https://github.com/kitodo/kitodo-presentation\">https://github.com/kitodo/kitodo-presentation</a></li> 	<li>DFG-Viewer Webseite:&nbsp;https://dfg-viewer.de/</li> </ul>',0,0,0,0,0,0,0,2,0,0,0,'default',0,0,0,'','',NULL,NULL,0,'','',0,'3','',1,0,NULL,0,'','','',0,0,0,NULL,'',0,'',NULL,'','',NULL,124,0,0,0,0,0,0);
+INSERT INTO `tt_content` VALUES (172,NULL,111,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,0,0,0,0,0,'text','','','Der DFG-Viewer ist die Referenzimplementierung für die Digitalisierungsstandards, die die <LINK http://www.dfg.de/ - external>Deutsche Forschungsgemeinschaft (DFG)</link> in ihren <LINK http://www.dfg.de/formulare/12_151/index.jsp - external>Praxisregeln &quot;Digitalisierung&quot;</link> jedem Projektnehmer als verpflichtend auferlegt. Dies sind insbesondere die Datenformate METS/MODS und METS/TEI sowie die Austauschschnittstelle OAI-PMH. Da es sich dabei jedoch gleichzeitig um international gebräuchliche Standards handelt, kann der DFG-Viewer auch von Projekten eingesetzt werden, die keine Förderung durch die DFG erfahren haben. Einzige Voraussetzung sind die <LINK 28>Einhaltung der genannten Standards</link> und die uneingeschränkte Erreichbarkeit der Digitalisate im Internet. Darüber hinaus muss ein Anbieter keine eigene Präsentationssoftware installieren oder betreiben. Das Angebot ist zudem für den Datenanbieter wie auch die Nutzer kostenfrei.\r\n<h3>Wie funktionierts?</h3>\r\nDie <LINK 27>Implementierung des DFG-Viewers</link> ist denkbar einfach: Beim Aufruf des DFG-Viewers wird ein Link auf die technische Kodierung des anzuzeigenden Digitalisats im <LINK 23>METS-Format</link> als URL-Parameter übergeben. Der Webdienst ruft die referenzierte METS-Datei daraufhin beim Anbieter ab und entnimmt ihr alle notwendigen Informationen für die Anzeige des Digitalisats und gegebenenfalls weitere Zusatzfunktionen. Da die Links auf die METS-Dateien in der Regel unveränderlich sind, können die resultierenden DFG-Viewer-Aufrufe problemlos auf Webseiten oder in Nachweissystemen wie z.B. Bibliothekskatalogen abgelegt werden, um Nutzern per Klick die Ansicht eines Digitalisats zu ermöglichen.\r\n<h3>Grundfunktionen</h3>\r\nDabei bietet der DFG-Viewer abhängig von der verfügbaren Datenqualität der METS-Datei und dem anzuzeigenden Dokumenttyp einen dynamischen Funktionsumfang. Mindestens kann der Nutzer im Digitalisat blättern, einen stufenlosen Zoom verwenden sowie zwischen einer Einzel- und Doppelseitenansicht (wahlweise im Vollbildmodus)&nbsp;umschalten. Außerdem erhält er einen Basissatz an Metadaten, die das Digitalisat beschreiben (i.d.R. Titel, Autor, Erscheinungsort und Erscheinungsdatum), sowie Angaben zum Anbieter des Digitalisats. Sind darüber hinaus weitere Angaben in der METS-Datei vorhanden, werden automatisch die folgenden Funktionen zusätzlich angeboten:\r\n<h3>Inhaltsverzeichnis</h3>\r\nVerfügt die METS-Datei über sogenannte <LINK 22>Strukturdaten</link>, also eine inhaltliche Gliederung des Digitalisats, zeigt der DFG-Viewer diese als Inhaltsverzeichnis an und erlaubt dem Nutzer, darüber im Digitalisat zu navigieren. Ist zudem die Paginierung erfasst, zeigt der DFG-Viewer sowohl im Inhaltsverzeichnis als auch der Seitenauswahl die entsprechenden Seitenzahlen an (bei Handschriften entsprechend der Foliierung auch die Blattzählung).\r\n<h3>Weitere Metadaten</h3>\r\nWurden neben den bibliographischen Titeldaten weitere deskriptive Metadaten (etwa Artikelüberschriften und -autoren) erfasst, so werden diese zusätzlich angezeigt, sobald der Nutzer die entsprechenden Strukturelemente öffnet. Die Anzeige erfolgt in einer ausklappbaren Box, so dass dem Nutzer überlassen bleibt, wie viel Platz er den Metadaten einräumen will.\r\nDie Metadaten können medientypabhängig sowohl im <LINK 23>MODS- wie auch im TEI-Format</link> kodiert werden. Während ersteres überwiegend für Druckwerke verwendet wird, ist letzteres für mittelalterliche und frühneuzeitliche Handschriften gebräuchlich.\r\n<h3>Permalinks und Download</h3>\r\nSofern der Datenanbieter für das Digitalisat Permalinks zur wissenschaftlichen Zitation zur Verfügung stellt und diese in der METS-Datei angegeben sind, zeigt auch der DFG-Viewer diese Referenzen an und erlaubt dem Nutzer somit die werks- und seitengenaue Adressierung des Digitalisats auch im wissenschaftlichen Kontext.\r\nWahlweise kann der Datenanbieter auch einen PDF-Download des Digitalisats (als ganzes Werk oder Einzelseiten) erlauben. Der DFG-Viewer zeigt in diesem Fall entsprechende Buttons an, über die der Download ausgelöst werden kann.\r\n<h3>Kalenderansicht</h3>\r\nInsbesondere Zeitungen, aber auch andere Periodika mit langem Erscheinungsverlauf werden klassischerweise chronologisch erschlossen und über eine Kalenderansicht präsentiert. Der DFG-Viewer erkennt solche Digitalisate anhand ihrer auf drei separate METS-Dateien verteilten&nbsp;chronologischen Struktur automatisch und bietet eine dreistufige Navigation über die Auswahl eines Jahrgangs, gefolgt von einer Übersicht des Erscheinungsverlauf innerhalb dieses Jahrgangs bis hin zur Anzeige einer konkreten Ausgabe. Natürlich ist auch die umgekehrte Navigation von der Ausgabe zum Jahrgang bzw. zur Übersicht des Gesamttitels jederzeit möglich. Innerhalb einer Ausgabe stehen dem Nutzer wiederum alle übrigen Funktionen des DFG-Viewers wie gewohnt zur Verfügung, inklusive einer möglichen weiteren inhaltlichen Untergliederung der Ausgabe anhand eines Inhaltsverzeichnisses.\r\n<h3>Volltexte</h3>\r\nLiegen für das Digitalisat Volltexte im ALTO-Format mit Wortkoordinaten vor, so können diese auch vom DFG-Viewer zur Anzeige gebracht werden. Dabei ermittelt der DFG-Viewer anhand der Wortkoordinaten und abhängig von der vom Nutzer gewählten Zoomstufe die exakte Position der Worte auf dem Scan. Wählt der Nutzer nun einen Bildausschnitt aus, wird der dort befindliche Text in einer separaten Ansicht eingeblendet und kann beispielsweise als Zitat einfach kopiert werden. Aber auch schwer erkennbare Textstellen oder etwa ungewohnte Frakturschriften können auf diese Weise flüssig gelesen werden.\r\nVerfügt der Datenanbieter darüber hinaus über einen Volltext-Index mit öffentlicher SRU-Schnittstelle, bietet der DFG-Viewer dem Nutzer sogar einen Suchschlitz zur Volltextrecherche an. Darüber kann der Nutzer wahlweise innerhalb des aktuellen Digitalisats oder sogar in größeren Beständen des Anbieters recherchieren. Die Ergebnisse werden wiederum direkt im DFG-Viewer angezeigt, so dass der Nutzer dazu nicht zwischen mehreren Systemen und Anbietern wechseln muss.\r\n<h3>Nachhaltigkeit</h3>\r\nDie Entwicklung des DFG-Viewers wurde und wird von der DFG gefördert, während die <LINK http://www.slub-dresden.de/ - external>SLUB Dresden</link> in Eigenleistung den dauerhaften Betrieb in einem leistungsfähigen Server-Cluster gewährleistet. Auch der Quellcode des DFG-Viewers ist frei und kann unter der Open Source-Lizenz GPL3 auf <LINK https://github.com/slub/dfg-viewer - external>GitHub</link> bezogen und kostenfrei&nbsp;nachgenutzt werden. Über die Plattform können auch eigene Weiterentwicklungen in das Projekt eingebracht werden.',0,0,0,0,0,0,0,1,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,1,0,0),(181,NULL,106,1628603526,1628603526,1,0,0,0,0,'',256,0,1,182,0,NULL,1,'a:4:{s:11:\"l18n_parent\";N;s:9:\"starttime\";i:0;s:7:\"endtime\";i:0;s:11:\"pi_flexform\";s:3927:\"<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"what_to_display\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listOrderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"ascDesc\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"categoryMode\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"categorySelection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"useSubCategories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"archive\">\n                    <value index=\"vDEF\">-1</value>\n                </field>\n                <field index=\"pages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_template\">\n            <language index=\"lDEF\">\n                <field index=\"template_file\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"alternatingLayouts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"croppingLenght\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_category\">\n            <language index=\"lDEF\">\n                <field index=\"catImageMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatImages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catTextMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatTexts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_misc\">\n            <language index=\"lDEF\">\n                <field index=\"PIDitemDisplay\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"firstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"forceFirstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"listStartId\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listLimit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"noPageBrowser\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"maxWordsInSingleView\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>\";}',0,0,0,0,0,0,0,'text','','','The <LINK 25 - - \"Start the demonstrator!\"><i><acronym title=\"(dt.) Deutsche Forschungsgemeinschaft; (engl.) German Research Foundation\">DFG</acronym> Viewer</i></link> is a browser web service for displaying digital representations from decentralised library repositories. It has an <acronym title=\"extensible markup language\">XML</acronym> interface for exchanging meta- and structural data in the <LINK 23 - - \"metadata encoding and transmission standard\"><acronym title=\"metadata encoding and transmission standard\">METS</acronym>/<acronym title=\"metadata object description schema\">MODS</acronym> and <acronym title=\"metadata encoding and transmission standard\">METS</acronym>/<acronym title=\"text encoding initiative\">TEI</acronym> format</link>. Displaying of a digital representation is enriched and supplemented with additional functions, if applicable, with the help of these data.\r\nAs a result, users are provided with a uniform interface for viewing digitised media. They can browse documents, view and download the individual digital representations in various resolutions and switch to the respective web presentation of the library involved upon a request to that end in order to use further possibilities there.\r\nThe <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym> Viewer</i> is based on the free <acronym title=\"content management system\">CMS</acronym> <LINK http://www.typo3.org/ - - TYPO3>TYPO3</link>&nbsp;as well as the open source digitization software <LINK http://www.goobi.org/en/ - external>Goobi</link>&nbsp;and can be used free of charge by anyone interested. This can either be done centrally via the web service operated here or by means of a local implementation. In this context, connection is optionally provided via a native <acronym title=\"extensible markup language\">XML</acronym> interface or via the standardised <acronym title=\"open archives initiative\">OAI</acronym> protocol. You can find comprehensive documentations, examples and useful tips regarding both application scenarios there.\r\n<p class=\"abstract\"><span class=\"information\">Moreover, this web service is intended to start a <LINK 14>discussion</link> regarding metadata standards for mass digitisation projects sponsored by <acronym title=\"(dt.) Deutsche Forschungsgemeinschaft; (engl.) German Research Foundation\">DFG</acronym> and their applicability, which should be as broad as possible, and to put the sample application, such as the <i>Viewer</i>, to the test.</span></p>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"what_to_display\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listOrderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"ascDesc\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"categoryMode\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"categorySelection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"useSubCategories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"archive\">\n                    <value index=\"vDEF\">-1</value>\n                </field>\n                <field index=\"pages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_template\">\n            <language index=\"lDEF\">\n                <field index=\"template_file\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"alternatingLayouts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"croppingLenght\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_category\">\n            <language index=\"lDEF\">\n                <field index=\"catImageMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatImages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catTextMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatTexts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_misc\">\n            <language index=\"lDEF\">\n                <field index=\"PIDitemDisplay\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"firstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"forceFirstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"listStartId\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listLimit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"noPageBrowser\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"maxWordsInSingleView\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,0,0,0,0,10,0,0),(182,NULL,106,1628603526,1628603526,1,0,0,0,0,'',128,0,0,0,0,NULL,0,'a:1:{s:11:\"pi_flexform\";N;}',0,0,0,0,0,0,0,'text','','','Der <LINK 25><i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewer</i></link> ist ein Browser-Webdienst zur Anzeige von Digitalisaten aus dezentralen Bibliotheksrepositorien. Er verfügt über eine <acronym title=\"(engl.) open archives initiative protocol for metadata harvesting; (dt.) Protokoll zur Metadatensammlung der Initiative zum freien Datenaustausch\">OAI-PMH</acronym>-Schnittstelle zum Austausch von Meta- und Strukturdaten im <LINK 23><acronym title=\"(engl.) metadata encoding and transmission standard; (dt.) Metadatenkodierungs- und -übertragungsstandard\">METS</acronym>/<acronym title=\"(engl.) metadata object description schema; (dt.) Schema zur Beschreibung von Objektmetadaten\">MODS</acronym>- und <acronym title=\"(engl.) metadata encoding and transmission standard; (dt.) Metadatenkodierungs- und -übertragungsstandard\">METS</acronym>/<acronym title=\"(engl.) text encoding initiative; (dt.) Textkodierungsinitiative\">TEI</acronym>-Format</link>. Mit Hilfe dieser Daten wird die Anzeige eines Digitalisats angereichert und gegebenenfalls um zusätzliche Funktionen ergänzt.\r\nBenutzer finden somit eine vereinheitlichte Oberfläche zur Ansicht von digitalisierten Medien vor. Sie können in einem Werk blättern, die einzelnen Digitalisate in mehreren Auflösungen betrachten und herunterladen sowie auf Wunsch zur jeweiligen Webpräsentation der beteiligten Bibliothek wechseln, um dort weitergehende Möglichkeiten zu nutzen.\r\nDer <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewer</i> basiert auf dem freien <acronym title=\"(engl.) content management system; (dt.) Redaktionssystem\">CMS</acronym> <LINK http://www.typo3.org/ - external TYPO3>TYPO3</link>&nbsp;sowie der quelloffenen Digitalisierungssoftware <LINK http://kitodo.org - external>Kitodo</link>&nbsp;und kann von jedem Interessierten kostenlos genutzt werden. Dies kann entweder zentral über den hier laufenden Webdienst erfolgen oder durch eine lokale Implementierung. Die Anbindung erfolgt dabei wahlweise über eine native <acronym title=\"(engl.) extensible markup language; (dt.) erweiterbare Auszeichnungssprache\">XML</acronym>-Schnittstelle oder über das standardisierte <acronym title=\"(engl.) open archives initiative; (dt.) Initiative zum freien Datenaustausch\">OAI</acronym>-Protokoll. Hier finden Sie zu beiden Anwendungsszenarien ausführliche Dokumentationen, Beispiele und hilfreiche Tipps.\r\nEine ausführlichere Beschreibung der Funktionen und Möglichkeiten des DFG-Viewers finden Sie auf der <LINK 31>entsprechenden Unterseite</link>.\r\n<p class=\"abstract\"><span class=\"information\">Dieses Webangebot soll zudem eine möglichst breite <LINK 14>Diskussion</link> über Metadatenstandards für <acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-geförderte Massendigitalisierungsprojekte und ihre Anwendbarkeit anregen sowie Musterapplikation wie den <i>Viewer</i> erproben.</span></p>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"what_to_display\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listOrderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"ascDesc\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"categoryMode\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"categorySelection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"useSubCategories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"archive\">\n                    <value index=\"vDEF\">-1</value>\n                </field>\n                <field index=\"pages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_template\">\n            <language index=\"lDEF\">\n                <field index=\"template_file\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"imageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"alternatingLayouts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"croppingLenght\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_category\">\n            <language index=\"lDEF\">\n                <field index=\"catImageMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catImageMaxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatImages\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"catTextMode\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"maxCatTexts\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"s_misc\">\n            <language index=\"lDEF\">\n                <field index=\"PIDitemDisplay\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"firstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"forceFirstImageIsPreview\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"listStartId\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"listLimit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"noPageBrowser\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"maxWordsInSingleView\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,0,0,0,0,11,0,0),(183,NULL,105,1658949210,1628603526,1,0,0,0,0,'',256,0,0,186,0,NULL,259,'a:18:{s:5:\"CType\";N;s:6:\"colPos\";N;s:6:\"header\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"frame_class\";N;s:18:\"space_before_class\";N;s:17:\"space_after_class\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:16:\"sys_language_uid\";N;s:6:\"hidden\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,0,0,0,0,0,'html','','','<script type=\"text/javascript\">\r\n/* <![CDATA[ */\r\nfunction DFGVIEWER_resolveDemoLink() {\r\nbaseUrls = new Object();\r\nbaseUrls[\"slub\"] = \"http://digital.slub-dresden.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"hab\"] = \"http://dbs.hab.de/oai/wdb?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"ulb\"] = \"http://digitale.bibliothek.uni-halle.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"bsb\"] = \"http://daten.digitale-sammlungen.de/~db/mets/\";\r\nbaseUrls[\"sub\"] = \"http://gdz.sub.uni-goettingen.de/mets_export.php?PPN=\";\r\ndocument.getElementById(\"mets\").value = baseUrls[document.getElementById(\"org\").value] + document.getElementById(\"id\").value;\r\nif(document.getElementById(\"org\").value==\"bsb\") { document.getElementById(\"mets\").value = document.getElementById(\"mets\").value + \"_mets.xml\"; }\r\nreturn true;\r\n}\r\n/* ]]> */\r\n</script>\r\n<div class=\"abstract\">\r\n<noscript><p><strong>Bitte aktivieren Sie Javascript, um diese Funktion nutzen zu können!</strong></p></noscript>\r\n<div class=\"example\">\r\n<h4>Beispiele</h4>\r\n<p><strong><acronym title=\"Sächsische Landesbibliothek - Staats- und Universitätsbibliothek\">SLUB</acronym> Dresden</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-263566811</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-274591448</a><br />\r\n<strong><acronym title=\"Herzog August Bibliothek\">HAB</acronym> Wolfenbüttel</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549837965</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549836969</a><br />\r\n<strong><acronym title=\"Universitäts- und Landesbibliothek\">ULB</acronym> Halle</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">94835</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">9834</a><br />\r\n<strong><acronym title=\"Bayerische Staatsbibliothek\">BSB</acronym> München</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020619</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020956</a><br />\r\n<strong><acronym title=\"Staats- und Universitätsbibliothek\">SUB</acronym> Göttingen</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574841571</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574578609</a></p>\r\n</div>\r\n<form method=\"get\" action=\"/show/\" onsubmit=\"return DFGVIEWER_resolveDemoLink();\"><div>\r\n<label for=\"id\">Identifikator</label><br />\r\n<input type=\"text\" class=\"text\" value=\"\" id=\"id\" required=\"required\" /><br />\r\n<label for=\"org\">Bibliothek</label><br />\r\n<select id=\"org\"><option value=\"slub\" selected=\"selected\">SLUB Dresden</option><option value=\"hab\">HAB Wolfenbüttel</option><option value=\"ulb\">ULB Halle</option><option value=\"bsb\">BSB München</option><option value=\"sub\">SUB Göttingen</option></select><br />\r\n<input type=\"hidden\" name=\"tx_dlf[id]\" id=\"mets\" value=\"\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Demonstrator aufrufen!\" />\r\n</div></form>\r\n<br style=\"clear:both;\" />\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,12,0,0),(184,NULL,105,1658949210,1628603526,1,0,0,0,0,'',128,0,1,183,0,NULL,0,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";i:0;s:7:\"endtime\";i:0;}',0,0,0,0,0,0,0,'html','','','<script type=\"text/javascript\">\r\n/* <![CDATA[ */\r\nfunction getLink() {\r\nbaseUrls = new Object();\r\nbaseUrls[\"slub\"] = \"http://digital.slub-dresden.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"hab\"] = \"http://dbs.hab.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"ulb\"] = \"http://digitale.bibliothek.uni-halle.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=\";\r\nbaseUrls[\"bsb\"] = \"http://daten.digitale-sammlungen.de/~db/mets/\";\r\nbaseUrls[\"sub\"] = \"http://gdz.sub.uni-goettingen.de/mets_export.php?PPN=\";\r\ndocument.getElementById(\"mets\").value = baseUrls[document.getElementById(\"org\").value] + document.getElementById(\"id\").value;\r\nif(document.getElementById(\"org\").value==\"bsb\") { document.getElementById(\"mets\").value = document.getElementById(\"mets\").value + \"_mets.xml\"; }\r\nreturn true;\r\n}\r\n/* ]]> */\r\n</script>\r\n<div class=\"abstract\">\r\n<noscript><p><strong>This requires a browser that can handle javascript and has javacript enabled.</strong></p></noscript>\r\n<div class=\"example\">\r\n<h4>Examples</h4>\r\n<p><strong><acronym title=\"Sächsische Landesbibliothek - Staats- und Universitätsbibliothek\">SLUB</acronym> Dresden</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-263566811</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[0].selected=true;\">oai:de:slub-dresden:db:id-274591448</a><br />\r\n<strong><acronym title=\"Herzog August Bibliothek\">HAB</acronym> Wolfenbüttel</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549837965</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[1].selected=true;\">oai:diglib.hab.de:ppn_549836969</a><br />\r\n<strong><acronym title=\"Universitäts- und Landesbibliothek\">ULB</acronym> Halle</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">94835</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[2].selected=true;\">9834</a><br />\r\n<strong><acronym title=\"Bayerische Staatsbibliothek\">BSB</acronym> München</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020619</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[3].selected=true;\">bsb00020956</a><br />\r\n<strong><acronym title=\"Staats- und Universitätsbibliothek\">SUB</acronym> Göttingen</strong><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574841571</a><br />\r\n<a onclick=\"document.getElementById(\'id\').value=this.innerHTML;document.getElementById(\'org\').options[4].selected=true;\">PPN574578609</a></p>\r\n</div>\r\n<form method=\"get\" action=\"/show/\" onsubmit=\"return getLink();\"><div>\r\n<label for=\"id\">Identifier</label><br />\r\n<input type=\"text\" class=\"text\" value=\"\" id=\"id\" required=\"required\" /><br />\r\n<label for=\"org\">Library</label><br />\r\n<select id=\"org\"><option value=\"slub\" selected=\"selected\">SLUB Dresden</option><option value=\"hab\">HAB Wolfenbüttel</option><option value=\"ulb\">ULB Halle</option><option value=\"bsb\">BSB München</option><option value=\"sub\">SUB Göttingen</option></select><br />\r\n<input type=\"hidden\" name=\"tx_dlf[id]\" id=\"mets\" value=\"\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Call Demonstrator!\" />\r\n</div></form>\r\n<br style=\"clear:both;\" />\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,13,0,0),(185,NULL,105,1628603526,1628603526,1,0,0,0,0,'',64,0,1,186,0,NULL,259,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,0,0,0,0,0,'text','','','You can also look at works from the digitised stock of the project partners as examples by selecting or entering a corresponding identifier in the following form.',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,14,0,0),(186,NULL,105,1628603526,1628603526,1,0,0,0,0,'',32,0,0,0,0,NULL,0,'a:14:{s:5:\"CType\";N;s:16:\"sys_language_uid\";N;s:6:\"colPos\";N;s:11:\"spaceBefore\";N;s:10:\"spaceAfter\";N;s:13:\"section_frame\";N;s:12:\"sectionIndex\";N;s:6:\"hidden\";N;s:9:\"linkToTop\";N;s:8:\"bodytext\";N;s:11:\"rte_enabled\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;}',0,0,0,0,0,0,0,'text','','','Sie können sich auch exemplarisch Werke aus dem digitalisierten Bestand der Projektpartner anschauen, in dem Sie im folgenden Formular einen entsprechenden Identifikator auswählen oder eintragen.',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,15,0,0),(187,NULL,105,1628603526,1628603526,1,0,0,0,0,'',16,0,1,188,0,NULL,257,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,0,0,0,0,0,'html','','','<div class=\"abstract\">\r\n<form method=\"get\" action=\"/show/\"><div>\r\n<label for=\"mets\">Insert the link to your <acronym title=\"metadata encoding and transmission standard\">METS</acronym> file or <acronym title=\"open archives initiative\">OAI</acronym> interface here:</label><br />\r\n<input type=\"text\" class=\"url\" name=\"tx_dlf[id]\" value=\"\" /><br />\r\n<label for=\"debug\"><input id=\"debug\" type=\"checkbox\" name=\"set[debug]\" value=\"1\" disabled=\"disabled\" /> <strike>validation mode</strike> (temporarily unavailable)</label><br />\r\n<input type=\"hidden\" name=\"no_cache\" value=\"1\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Call Demonstrator!\" />\r\n</div></form>\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,16,0,0),(188,NULL,105,1628603526,1628603526,1,0,0,0,0,'',8,0,0,0,0,NULL,0,'a:15:{s:5:\"CType\";N;s:6:\"colPos\";N;s:16:\"sys_language_uid\";N;s:6:\"header\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"spaceBefore\";N;s:10:\"spaceAfter\";N;s:13:\"section_frame\";N;s:6:\"hidden\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;}',0,0,0,0,0,0,0,'html','','','<div class=\"abstract\">\r\n<form method=\"get\" action=\"/show/\"><div>\r\n<label for=\"mets\">Fügen Sie hier den Link zu Ihrer <acronym title=\"(engl.) metadata encoding and transmission standard; (dt.) Metadatenkodierungs- und -übertragungsstandard\">METS</acronym>-Datei bzw. <acronym title=\"(engl.) open archives initiative; (dt.) Initiative für freien Datenaustausch\">OAI</acronym>-Schnittstelle ein:</label><br />\r\n<input type=\"text\" class=\"url\" name=\"tx_dlf[id]\" value=\"\" /><br />\r\n<label for=\"debug\"><input id=\"debug\" type=\"checkbox\" name=\"set[debug]\" value=\"1\" disabled=\"disabled\" /> <strike>Validator-Modus aktivieren</strike> (vorübergehend nicht verfügbar)</label><br />\r\n<input type=\"hidden\" name=\"no_cache\" value=\"1\" />\r\n<input type=\"submit\" class=\"submit\" value=\"Demonstrator aufrufen!\" />\r\n</div></form>\r\n</div>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,17,0,0),(189,NULL,105,1628603526,1628603526,1,0,0,0,0,'',4,0,1,191,0,NULL,0,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,0,0,0,0,0,'text','','','<span class=\"information\">Please do not use the demonstrator but&nbsp;the stable and persistent version specified under <LINK 27>notes regarding implementation</link> to employ the <em><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym> Viewer</em> in the productive environment.</span>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,18,0,0),(190,NULL,105,1628603526,1628603526,1,0,0,0,0,'',2,0,1,192,0,NULL,205,'a:3:{s:11:\"l18n_parent\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;}',0,0,0,0,0,0,0,'text','','','The demonstrator presented here constitutes the respective most current stable version of the <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym> Viewer</i>.',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,19,0,0),(191,NULL,105,1628603526,1628603526,1,0,0,0,0,'',1,0,0,188,0,NULL,257,'a:1:{s:11:\"l18n_parent\";N;}',0,0,0,0,0,0,0,'text','','','<span class=\"information\">Um den <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewer</i> im produktiven Umfeld einzusetzen, verwenden Sie bitte nicht den Demonstrator, sondern die bei den <LINK 27>Hinweisen zur Implementierung</link> angegebene persistente Version.</span>',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,20,0,0),(192,NULL,105,1628603526,1628603526,1,0,0,0,0,'',0,0,0,0,0,NULL,0,'a:14:{s:5:\"CType\";N;s:16:\"sys_language_uid\";N;s:6:\"colPos\";N;s:11:\"spaceBefore\";N;s:10:\"spaceAfter\";N;s:13:\"section_frame\";N;s:12:\"sectionIndex\";N;s:6:\"hidden\";N;s:9:\"linkToTop\";N;s:8:\"bodytext\";N;s:11:\"rte_enabled\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;}',0,0,0,0,0,0,0,'text','','','Der hier präsentierte Demonstrator stellt jeweils die aktuellste stabile Version des <i><acronym title=\"Deutsche Forschungsgemeinschaft\">DFG</acronym>-Viewers</i> dar.',0,0,0,0,0,0,8,0,0,0,0,'default',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,'','',0,'','','','',NULL,0,0,0,0,21,0,0),(203,'',99,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:11:\"pi_flexform\";N;}',0,0,0,0,0,0,0,'list','','',NULL,0,0,0,0,0,0,0,2,0,0,0,'default',0,'','','','',0,'','',0,'3','news_pi1',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"settings.orderBy\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.orderDirection\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.categoryConjunction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.categories\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.includeSubCategories\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.archiveRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestrictionHigh\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.startingpoint\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.selectedList\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.singleNews\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.previewHiddenRecords\">\n                    <value index=\"vDEF\">2</value>\n                </field>\n                <field index=\"switchableControllerActions\">\n                    <value index=\"vDEF\">News-&gt;detail</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"additional\">\n            <language index=\"lDEF\">\n                <field index=\"settings.detailPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.listPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.backPid\">\n                    <value index=\"vDEF\">98</value>\n                </field>\n                <field index=\"settings.limit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.offset\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.tags\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.hidePagination\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.list.paginate.itemsPerPage\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsFirst\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.excludeAlreadyDisplayedNews\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.disableOverrideDemand\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"template\">\n            <language index=\"lDEF\">\n                <field index=\"settings.media.maxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.media.maxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.cropMaxCharacters\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.templateLayout\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,124,0,0,0,88,0,0),(204,'',98,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:11:\"pi_flexform\";N;}',0,0,0,0,0,0,0,'list','','',NULL,0,0,0,0,0,0,0,2,0,0,0,'default',0,'','','','',0,'','',0,'3','news_pi1',1,0,'',0,'','','',0,0,0,'<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>\n<T3FlexForms>\n    <data>\n        <sheet index=\"sDEF\">\n            <language index=\"lDEF\">\n                <field index=\"settings.orderBy\">\n                    <value index=\"vDEF\">datetime</value>\n                </field>\n                <field index=\"settings.orderDirection\">\n                    <value index=\"vDEF\">desc</value>\n                </field>\n                <field index=\"settings.categoryConjunction\">\n                    <value index=\"vDEF\">or</value>\n                </field>\n                <field index=\"settings.categories\">\n                    <value index=\"vDEF\">3</value>\n                </field>\n                <field index=\"settings.includeSubCategories\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.archiveRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.timeRestrictionHigh\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsRestriction\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.startingpoint\">\n                    <value index=\"vDEF\">86</value>\n                </field>\n                <field index=\"settings.recursive\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.selectedList\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"switchableControllerActions\">\n                    <value index=\"vDEF\">News-&gt;list</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"additional\">\n            <language index=\"lDEF\">\n                <field index=\"settings.detailPid\">\n                    <value index=\"vDEF\">99</value>\n                </field>\n                <field index=\"settings.listPid\">\n                    <value index=\"vDEF\">98</value>\n                </field>\n                <field index=\"settings.backPid\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.limit\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.offset\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.tags\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.hidePagination\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.list.paginate.itemsPerPage\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.topNewsFirst\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.excludeAlreadyDisplayedNews\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n                <field index=\"settings.disableOverrideDemand\">\n                    <value index=\"vDEF\">0</value>\n                </field>\n            </language>\n        </sheet>\n        <sheet index=\"template\">\n            <language index=\"lDEF\">\n                <field index=\"settings.media.maxWidth\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.media.maxHeight\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.cropMaxCharacters\">\n                    <value index=\"vDEF\"></value>\n                </field>\n                <field index=\"settings.templateLayout\">\n                    <value index=\"vDEF\"></value>\n                </field>\n            </language>\n        </sheet>\n    </data>\n</T3FlexForms>','',0,'','','','',NULL,124,0,0,0,87,0,0),(205,'',98,1628603526,1628603526,1,0,0,0,0,'',128,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,0,0,0,0,0,'text','','','<p>Auf dieser Seite dokumentieren wir Änderungen an der DFG-Viewer Webseite und am DFG-Viewer selbst. So können Sie nachvollziehen, ob kürzlich Änderungen vorgenommen wurden.</p>\r\n<p>Wenn Sie Fehler feststellen oder Verbesserungsvorschläge haben, können Sie uns auf den gewohnten Kanälen kontaktieren. Siehe Seite <a class=\"link-internal\" href=\"94\">Kontakt</a>.</p>',0,0,0,0,0,0,0,2,0,0,0,'default',0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,124,0,0,0,89,0,0),(250,NULL,85,1628603526,1628603526,1,0,0,0,0,'',256,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,0,0,0,0,0,'text','DFG-Viewer Mailingliste','','<p>Bleiben Sie steht informiert und tauschen Sie sich mit anderen Nutzern und den Entwicklern des DFG-Viewers zu aktuellen Themen und Trends aus.</p>\r\n<p><a class=\"more\" href=\"14\" title=\"Mehr dazu\">In Kontakt bleiben</a></p>',0,0,0,0,0,0,0,2,0,0,101,'mailinglist',0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,79,0,0),(251,NULL,85,1628608848,1628603526,1,0,0,0,0,'',128,0,0,0,0,NULL,0,'a:23:{s:5:\"CType\";N;s:6:\"colPos\";N;s:6:\"header\";N;s:13:\"header_layout\";N;s:15:\"header_position\";N;s:4:\"date\";N;s:11:\"header_link\";N;s:9:\"subheader\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"frame_class\";N;s:18:\"space_before_class\";N;s:17:\"space_after_class\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:16:\"sys_language_uid\";N;s:6:\"hidden\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,0,0,0,0,0,'text','METS, MODS, TEI. Metadaten des DFG-Viewers','','<p>Das verwendete Metadatenformat ist ausführlich dokumentiert und mit Beispielen versehen. Die beschriebene Minimalversion kann sehr leicht aus vorhandenen Metadaten anderer Formate erzeugt werden und genügt bereits, um den DFG-Viewer anzusprechen.</p>\r\n<p><a class=\"link-more\" href=\"t3://page?uid=104\">Mehr erfahren</a></p>',0,0,0,0,0,0,0,2,0,0,101,'metadata',0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,80,0,0),(252,NULL,85,1628603526,1628603526,1,0,0,0,0,'',64,0,0,0,0,NULL,0,'a:18:{s:5:\"CType\";N;s:6:\"colPos\";N;s:6:\"header\";N;s:8:\"bodytext\";N;s:6:\"layout\";N;s:11:\"frame_class\";N;s:18:\"space_before_class\";N;s:17:\"space_after_class\";N;s:12:\"sectionIndex\";N;s:9:\"linkToTop\";N;s:16:\"sys_language_uid\";N;s:6:\"hidden\";N;s:9:\"starttime\";N;s:7:\"endtime\";N;s:8:\"fe_group\";N;s:8:\"editlock\";N;s:10:\"categories\";N;s:14:\"rowDescription\";N;}',0,0,0,0,0,0,0,'html','DFG-Viewer Demonstrator','','<h3>DFG-Viewer Demonstrator</h3>\r\n<p>Sehen Sie hier zunächst drei Demonstrationen des DFG-Viewers mit ausgewählten Werken verschiedener Projektpartner.</p>\r\n                    <ul class=\"demo-list\">\r\n                        <li>\r\n                            <a href=\"/show/?tx_dlf%5Bid%5D=http%3A%2F%2Fdigital.slub-dresden.de%2Foai%2F%3Fverb%3DGetRecord%26metadataPrefix%3Dmets%26identifier%3Doai%3Ade%3Aslub-dresden%3Adb%3Aid-263566811\" title=\"\">\r\n                                <img src=\"/typo3conf/ext/dfgviewer/Resources/Public/Images/Demopages/demoSLUB.jpg\" alt=\"demoSLUB\">\r\n                                <span class=\"title\">Der furnembsten, notwendigsten, der gantzen Architectur angehoerigen Mathematischen und…</span>\r\n                                <span class=\"uid\">oai:de:slub-dresden:db:id-263566811</span>\r\n                                <span class=\"institute\">SLUB Dresden</span>\r\n                            </a>\r\n                        </li>\r\n                        <li>\r\n                            <a href=\"/show/?tx_dlf%5Bid%5D=http%3A%2F%2Fdaten.digitale-sammlungen.de%2F~db%2Fmets%2Fbsb00020619_mets.xml\" title=\"\">\r\n                                <img src=\"/typo3conf/ext/dfgviewer/Resources/Public/Images/Demopages/demoBSB.jpg\" alt=\"demoSLUB\">\r\n                                <span class=\"title\">Prima [- Undecima] pars librorum divi Aurelii Augustini…</span>\r\n                                <span class=\"uid\">bsb00020619</span>\r\n                                <span class=\"institute\">BSB München</span>\r\n                            </a>\r\n                        </li>\r\n                        <li>\r\n                            <a href=\"/show/?tx_dlf%5Bid%5D=http%3A%2F%2Fdbs.hab.de%2Foai%2Fwdb%3Fverb%3DGetRecord%26metadataPrefix%3Dmets%26identifier%3Doai%3Adiglib.hab.de%3Appn_549836969\" title=\"\">\r\n                                <img src=\"/typo3conf/ext/dfgviewer/Resources/Public/Images/Demopages/demoHAB.jpg\" alt=\"demoSLUB\">\r\n                                <span class=\"title\">Johannis Michaelis Dilherri, Franci, Disputationum Academicarum, praecipue Philologicarum, Tomus…</span>\r\n                                <span class=\"uid\">oai:diglib.hab.de:ppn_549836969</span>\r\n                                <span class=\"institute\">HAB Wolfenbüttel</span>\r\n                            </a>\r\n                        </li>\r\n                    </ul>\r\n                    <p><a href=\"/demo/\" title=\"Mehr dazu\" class=\"more\">Weitere Beispiele ansehen</a></p>',0,0,0,0,0,0,0,2,0,0,101,'demo',0,'','','','',0,'','',0,'0','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,81,0,0),(253,NULL,85,1628603526,1628603526,1,0,0,0,0,'',32,0,0,0,0,NULL,0,'a:1:{s:8:\"bodytext\";N;}',0,0,0,0,0,0,0,'text','','','<p>Der DFG-Viewer ist die Referenzimplementierung für die Digitalisierungsstandards der&nbsp;<a href=\"https://www.dfg.de/\" title=\"Deutsche Forschungsgemeinschaft (DFG)\">Deutschen Forschungsgemeinschaft (DFG)</a>. Das sind insbesondere die Datenformate METS/MODS und METS/TEI sowie die Austauschschnittstelle OAI-PMH.</p>\r\n<p>Das Angebot ist für den Datenanbieter wie auch die Nutzer kostenfrei.</p>\r\n<p><a class=\"more\" href=\"25\" title=\"Mehr dazu\">Mehr erfahren</a></p>',0,0,0,0,0,0,0,2,0,0,101,'mission',0,'','','','',0,'','',0,'3','',1,0,'',0,'','','',0,0,0,NULL,'',0,'','','','',NULL,0,0,0,0,82,0,0),(255,'',85,1645107681,1645107681,1,0,0,0,0,'',16,0,0,0,0,NULL,0,'',0,0,0,0,0,0,0,'text','DDEV Entwicklungssystem DFG-Viewer','','<p>Dies ist ein DDEV-Entwicklungssystem für die Entwicklung an der DFG-Viewer Webseite.</p>\r\n<p>Alle Inhalte in diesem System dienen nur der Entwicklung. Die maßgeblichen Inhalte finden Sie auf der DFG-Viewer Webseite.</p>\r\n<p>Nützliche Adressen:</p>\r\n<ul> 	<li>DFG-Viewer Extension:&nbsp;<a href=\"https://github.com/slub/dfg-viewer\">https://github.com/slub/dfg-viewer</a></li> 	<li>Kitodo.Presentation:&nbsp;<a href=\"https://github.com/kitodo/kitodo-presentation\">https://github.com/kitodo/kitodo-presentation</a></li> 	<li>DFG-Viewer Webseite:&nbsp;https://dfg-viewer.de/</li> </ul>',0,0,0,0,0,0,0,2,0,0,0,'default',0,'','',NULL,NULL,0,'','',0,'3','',1,0,NULL,0,'','','',0,0,0,NULL,'',0,'',NULL,'','',NULL,124,0,0,0,0,0,0);
 /*!40000 ALTER TABLE `tt_content` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2547,6 +2444,7 @@ CREATE TABLE `tx_extensionmanager_domain_model_extension` (
   `integer_version` int(11) NOT NULL DEFAULT 0,
   `current_version` int(11) NOT NULL DEFAULT 0,
   `lastreviewedversion` int(11) NOT NULL DEFAULT 0,
+  `documentation_link` varchar(2048) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `versionextrepo` (`extension_key`,`version`,`repository`),
   KEY `index_extrepo` (`extension_key`,`repository`),
@@ -2604,14 +2502,18 @@ DROP TABLE IF EXISTS `tx_impexp_presets`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `tx_impexp_presets` (
-  `uid` int(11) NOT NULL AUTO_INCREMENT,
-  `user_uid` int(11) NOT NULL DEFAULT 0,
+  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_uid` int(10) unsigned NOT NULL DEFAULT 0,
   `title` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `public` smallint(6) NOT NULL DEFAULT 0,
   `item_uid` int(11) NOT NULL DEFAULT 0,
   `preset_data` blob DEFAULT NULL,
+  `pid` int(10) unsigned NOT NULL DEFAULT 0,
+  `tstamp` int(10) unsigned NOT NULL DEFAULT 0,
+  `crdate` int(10) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`uid`),
-  KEY `lookup` (`item_uid`)
+  KEY `lookup` (`item_uid`),
+  KEY `parent` (`pid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2886,73 +2788,6 @@ LOCK TABLES `tx_news_domain_model_tag` WRITE;
 /*!40000 ALTER TABLE `tx_news_domain_model_tag` DISABLE KEYS */;
 INSERT INTO `tx_news_domain_model_tag` VALUES (4,86,1628603526,1628603526,1,0,0,0,0,'',0,'',NULL,0,0,0,0,0,'',0,0,0,0,0,'Metadaten','metadaten','','','','');
 /*!40000 ALTER TABLE `tx_news_domain_model_tag` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tx_scheduler_task`
---
-
-DROP TABLE IF EXISTS `tx_scheduler_task`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tx_scheduler_task` (
-  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `crdate` int(10) unsigned NOT NULL DEFAULT 0,
-  `disable` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `deleted` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `description` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `nextexecution` int(10) unsigned NOT NULL DEFAULT 0,
-  `lastexecution_time` int(10) unsigned NOT NULL DEFAULT 0,
-  `lastexecution_failure` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  `lastexecution_context` varchar(3) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `serialized_task_object` mediumblob DEFAULT NULL,
-  `serialized_executions` mediumblob DEFAULT NULL,
-  `task_group` int(10) unsigned NOT NULL DEFAULT 0,
-  PRIMARY KEY (`uid`),
-  KEY `index_nextexecution` (`nextexecution`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tx_scheduler_task`
---
-
-LOCK TABLES `tx_scheduler_task` WRITE;
-/*!40000 ALTER TABLE `tx_scheduler_task` DISABLE KEYS */;
-INSERT INTO `tx_scheduler_task` VALUES (1,1645107720,0,0,'',1645111305,1645107723,'','BE','O:35:\"TYPO3\\CMS\\Recycler\\Task\\CleanerTask\":11:{s:9:\"\0*\0period\";i:-1;s:12:\"\0*\0tcaTables\";a:33:{i:0;s:16:\"tx_dlf_actionlog\";i:1;s:14:\"backend_layout\";i:2;s:8:\"be_users\";i:3;s:9:\"be_groups\";i:4;s:13:\"tx_dlf_basket\";i:5;s:12:\"sys_category\";i:6;s:18:\"tx_dlf_collections\";i:7;s:14:\"tx_dlf_formats\";i:8;s:16:\"tx_dlf_documents\";i:9;s:11:\"tx_dlf_mail\";i:10;s:18:\"sys_file_reference\";i:11;s:16:\"sys_file_storage\";i:12;s:19:\"sys_file_collection\";i:13;s:14:\"sys_filemounts\";i:14;s:8:\"sys_note\";i:15;s:16:\"tx_dlf_libraries\";i:16;s:21:\"tx_dlf_metadataformat\";i:17;s:15:\"tx_dlf_metadata\";i:18;s:25:\"tx_news_domain_model_link\";i:19;s:24:\"tx_news_domain_model_tag\";i:20;s:25:\"tx_news_domain_model_news\";i:21;s:10:\"tt_content\";i:22;s:5:\"pages\";i:23;s:14:\"tx_dlf_printer\";i:24;s:14:\"sys_collection\";i:25;s:12:\"sys_redirect\";i:26;s:23:\"tx_scheduler_task_group\";i:27;s:16:\"tx_dlf_solrcores\";i:28;s:17:\"tx_dlf_structures\";i:29;s:8:\"sys_news\";i:30;s:12:\"sys_template\";i:31;s:8:\"fe_users\";i:32;s:9:\"fe_groups\";}s:12:\"\0*\0scheduler\";N;s:10:\"\0*\0taskUid\";i:1;s:11:\"\0*\0disabled\";b:0;s:19:\"\0*\0runOnNextCronJob\";b:0;s:12:\"\0*\0execution\";O:29:\"TYPO3\\CMS\\Scheduler\\Execution\":6:{s:8:\"\0*\0start\";i:1645107705;s:6:\"\0*\0end\";s:0:\"\";s:11:\"\0*\0interval\";i:3600;s:11:\"\0*\0multiple\";s:1:\"0\";s:10:\"\0*\0cronCmd\";s:0:\"\";s:23:\"\0*\0isNewSingleExecution\";b:0;}s:16:\"\0*\0executionTime\";i:1645111305;s:14:\"\0*\0description\";s:0:\"\";s:12:\"\0*\0taskGroup\";i:0;s:9:\"\0*\0logger\";N;}','',0);
-/*!40000 ALTER TABLE `tx_scheduler_task` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tx_scheduler_task_group`
---
-
-DROP TABLE IF EXISTS `tx_scheduler_task_group`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tx_scheduler_task_group` (
-  `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `pid` int(10) unsigned NOT NULL DEFAULT 0,
-  `tstamp` int(10) unsigned NOT NULL DEFAULT 0,
-  `crdate` int(10) unsigned NOT NULL DEFAULT 0,
-  `cruser_id` int(10) unsigned NOT NULL DEFAULT 0,
-  `deleted` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `hidden` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `sorting` int(11) NOT NULL DEFAULT 0,
-  `groupName` varchar(80) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `description` text COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`uid`),
-  KEY `parent` (`pid`,`deleted`,`hidden`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tx_scheduler_task_group`
---
-
-LOCK TABLES `tx_scheduler_task_group` WRITE;
-/*!40000 ALTER TABLE `tx_scheduler_task_group` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tx_scheduler_task_group` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

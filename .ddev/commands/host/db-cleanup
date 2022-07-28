@@ -17,6 +17,9 @@ SET
 TRUNCATE TABLE db.be_sessions;
 TRUNCATE TABLE db.fe_sessions;
 
+TRUNCATE TABLE db.cache_hash;
+TRUNCATE TABLE db.cache_hash_tags;
+
 UPDATE db.sys_registry
 SET entry_value=NULL
 WHERE entry_namespace='core' AND entry_key LIKE 'formProtectionSessionToken:%';
