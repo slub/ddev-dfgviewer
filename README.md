@@ -6,6 +6,7 @@ DDEV Development System for the DFG-Viewer
 
 Just execute the `./start-basic.sh` script to
 
+* clone repositories into `extensions/` directory
 * create and start the DDEV project
 * install all dependancies including TYPO3, Kitodo.Presentation and DFG-Viewer
 * import the database
@@ -15,7 +16,7 @@ Just execute the `./start-basic.sh` script to
 
 ### TYPO3 Login
 
-Login to TYPO3-Backend is possible at https://ddev-dfgviewer.ddev.site/typo3/
+Login to TYPO3-Backend is possible at https://ddev-dfgviewer-sprint.ddev.site/typo3/
 
 * Login: `admin`
 * Password: `adminslub`

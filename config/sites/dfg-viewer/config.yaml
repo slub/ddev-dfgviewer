@@ -1,4 +1,4 @@
-base: 'https://ddev-dfgviewer.ddev.site/'
+base: 'https://ddev-dfgviewer-sprint.ddev.site/'
 baseVariants: {  }
 errorHandling: {  }
 languages:

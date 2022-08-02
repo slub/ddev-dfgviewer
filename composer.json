@@ -1,5 +1,9 @@
 {
     "repositories": {
+        "local": {
+            "type": "path",
+            "url": "./extensions/*"
+        },
         "0": {
             "type": "composer",
             "url": "https://composer.typo3.org/"
@@ -41,10 +45,11 @@
         "typo3/cms-t3editor": "^10.4",
         "typo3/cms-tstemplate": "^10.4",
         "typo3/cms-viewpage": "^10.4",
-        "slub/dfgviewer": "^5.2|dev-master|dev-dev-extbase-fluid",
+        "slub/dfgviewer": "dev-sprint",
+        "slub/slub-digitalcollections": "dev-sprint",
         "georgringer/news": "^8.5",
         "sgalinski/lfeditor": "^6.0",
-        "kitodo/presentation": "^4.0|dev-master"
+        "kitodo/presentation": "dev-sprint"
     },
     "scripts": {
         "typo3-cms-scripts": [
