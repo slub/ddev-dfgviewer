@@ -7,9 +7,6 @@ composer install
 
 test -f public/typo3conf/LocalConfiguration.php || typo3cms install:setup
 
-# Activate extension to copy default EXTCONF into LocalConfiguration
-typo3cms extension:activate dlf
-
 # # Other settings
 typo3cms configuration:set 'EXTENSIONS/dlf/fileGrpAudio' 'AUDIO'
 typo3cms configuration:set 'EXTENSIONS/dlf/fileGrpVideo' 'VIDEO,DEFAULT'

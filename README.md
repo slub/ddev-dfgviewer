@@ -12,6 +12,7 @@ cd ./ddev-dfgviewer
 
 ddev start
 ddev check-install
+#https://digital.slub-dresden.de/oai/?verb=GetRecord&metadataPrefix=mets&identifier=oai:de:slub-dresden:db:id-1666480371
 ddev launch '/viewer?tx_dlf[id]=https://digital.slub-dresden.de/data/kitodo/TheDarea_416971482-19100223/TheDarea_416971482-19100223_mets.xml'
 ```
 
@@ -27,5 +28,4 @@ ddev reset
 - Backend Login: https://dfgviewer-dist.ddev.site/typo3/
     - User: `admin`
     - Password: `adminslub`
-- phpMyAdmin: [https://dfgviewer-dist.ddev.site:8037](https://dfgviewer-dist.ddev.site:8037)
 
