@@ -28,5 +28,5 @@ languages:
     fallbacks: '0'
     flag: gb
     languageId: '1'
-rootPageId: 85
+rootPageId: 1
 routes: {  }

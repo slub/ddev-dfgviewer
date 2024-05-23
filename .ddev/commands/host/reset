@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# NOTE: Based upon https://github.com/FriendsOfTYPO3/introduction/blob/03c5ace387927f8b47f6d4a8d2a44bdaa3702cf5/.ddev/commands/host/reset
+
+## Description: Reset the project (all changes will be lost)
+## Usage: reset [flags]
+## Example: ddev reset\nddev reset --force
+## Flags: [{"Name":"force","Shorthand":"f","Usage":"Do not ask any interactive question"}]
+
+# Initialize local variables
+FORCE=""
+CHOICE=""
+
+
+# Functions
+reset_project () {
+    # Delete all files and folders from public/, except what's committed
+    git clean -ffx public/
+
+    rm -rf vendor/
+    rm -rf var/
+
+    ddev delete -Oy
+
+    echo "Project is reset and ready to be started!"
+}
+
+
+# Parse options and arguments
+while :; do
+    case ${1:-} in
+        -f|--force)
+            FORCE=true
+            ;;
+        --) # End of all options.
+            shift
+            break
+            ;;
+        -?*)
+            printf "ERROR: Unknown option: %s\n" "$1" >&2
+            exit
+            ;;
+        *)  # Default case: end of arguments.
+            break
+            ;;
+    esac
+
+    shift
+done
+
+# Set user confirmation if force option not set
+if [ ! "${FORCE}" = "true" ] ; then
+    printf "Warning, this will reset ddev-dfgviewer-dist and remove all changes. Continue [yes/no]? "
+    read -r CHOICE
+fi
+
+if [ "${CHOICE}" = "yes" ] || [ "${FORCE}" = "true" ] ; then
+    reset_project
+else
+    echo "Project reset aborted."
+fi

@@ -10,50 +10,49 @@
     "license": "GPL-2.0-or-later",
     "config": {
         "platform": {
-            "php": "7.3"
+            "php": "7.4"
         },
         "allow-plugins": {
-            "typo3/cms-composer-installers": true,
             "typo3/class-alias-loader": true,
-            "helhum/typo3-console-plugin": true
+            "typo3/cms-composer-installers": true
         }
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
-        "helhum/typo3-console": "^5.5.5",
-        "typo3/minimal": "^9.5",
-        "typo3/cms-about": "^9.5",
-        "typo3/cms-adminpanel": "^9.5",
-        "typo3/cms-belog": "^9.5",
-        "typo3/cms-beuser": "^9.5",
-        "typo3/cms-felogin": "^9.5",
-        "typo3/cms-fluid-styled-content": "^9.5",
-        "typo3/cms-form": "^9.5",
-        "typo3/cms-impexp": "^9.5",
-        "typo3/cms-info": "^9.5",
-        "typo3/cms-recycler": "^9.5",
-        "typo3/cms-redirects": "^9.5",
-        "typo3/cms-reports": "^9.5",
-        "typo3/cms-rte-ckeditor": "^9.5",
-        "typo3/cms-setup": "^9.5",
-        "typo3/cms-seo": "^9.5",
-        "typo3/cms-sys-note": "^9.5",
-        "typo3/cms-t3editor": "^9.5",
-        "typo3/cms-tstemplate": "^9.5",
-        "typo3/cms-viewpage": "^9.5",
-        "slub/dfgviewer": "^5.2|dev-master",
-        "georgringer/news": "^8.5",
-        "sgalinski/lfeditor": "^6.0",
-        "kitodo/presentation": "~3.3.0"
+        "helhum/typo3-console": "^8.1",
+        "typo3/minimal": "^11.5",
+        "typo3/cms-about": "^11.5",
+        "typo3/cms-adminpanel": "^11.5",
+        "typo3/cms-belog": "^11.5",
+        "typo3/cms-beuser": "^11.5",
+        "typo3/cms-felogin": "^11.5",
+        "typo3/cms-fluid-styled-content": "^11.5",
+        "typo3/cms-form": "^11.5",
+        "typo3/cms-impexp": "^11.5",
+        "typo3/cms-info": "^11.5",
+        "typo3/cms-recycler": "^11.5",
+        "typo3/cms-redirects": "^11.5",
+        "typo3/cms-reports": "^11.5",
+        "typo3/cms-rte-ckeditor": "^11.5",
+        "typo3/cms-setup": "^11.5",
+        "typo3/cms-seo": "^11.5",
+        "typo3/cms-sys-note": "^11.5",
+        "typo3/cms-t3editor": "^11.5",
+        "typo3/cms-tstemplate": "^11.5",
+        "typo3/cms-viewpage": "^11.5",
+        "slub/dfgviewer": "^v6.0|dev-master",
+        "kitodo/presentation": "v6.0|dev-master"
     },
     "scripts": {
-        "typo3-cms-scripts": [
-            "typo3cms install:fixfolderstructure",
-            "typo3cms install:generatepackagestates"
-        ],
         "post-autoload-dump": [
             "@typo3-cms-scripts"
+        ],
+        "typo3-cms-scripts": [
+            "typo3cms install:generatepackagestates",
+            "typo3cms install:fixfolderstructure",
+            "typo3 database:updateschema '*.add,*.change'",
+            "typo3 cache:flush"
         ]
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

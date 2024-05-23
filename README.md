@@ -1,24 +1,31 @@
-# ddev-dfgviewer
+# DDEV System for DFG Viewer
 
-DDEV Development System for the DFG-Viewer
+This DDEV system installs DFG Viewer based solely on its distribution package.
 
-## Start the Project
+A more comprehensive DDEV system based on database dumps is available at https://github.com/slub/ddev-dfgviewer.
 
-Just execute the `./start-basic.sh` script to
+## Getting Started
 
-* create and start the DDEV project
-* install all dependancies including TYPO3, Kitodo.Presentation and DFG-Viewer
-* import the database
+```bash
+git clone https://github.com/slub/ddev-dfgviewer.git
+cd ./ddev-dfgviewer
 
-## Usage
+ddev start
+ddev check-install
+ddev launch '/viewer?tx_dlf[id]=https://digital.slub-dresden.de/data/kitodo/TheDarea_416971482-19100223/TheDarea_416971482-19100223_mets.xml'
+```
 
-### TYPO3 Login
+## Other Commands
 
-Login to TYPO3-Backend is possible at https://ddev-dfgviewer.ddev.site/typo3/
+```bash
+# Start over
+ddev reset
+```
 
-* Login: `admin`
-* Password: `adminslub`
+## URLs
 
-### PHPMyAdmin
+- Backend Login: https://dfgviewer-dist.ddev.site/typo3/
+    - User: `admin`
+    - Password: `adminslub`
+- phpMyAdmin: [https://dfgviewer-dist.ddev.site:8037](https://dfgviewer-dist.ddev.site:8037)
 
-With `ddev launch -p` you launch the PHPMyAdmin to access the TYPO3 database.
