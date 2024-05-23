@@ -1,0 +1,35 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Shell Files
+[*.sh]
+indent_size = 4
+
+# JSON-Files
+[*.json]
+indent_style = space
+
+# ReST-Files
+[*.rst]
+indent_size = 3
+
+# YAML-Files
+[*.{yaml,yml}]
+indent_size = 2
+
+# SQL-Files
+[*.sql]
+indent_size = 2
+
+# .htaccess
+[{_.htaccess,.htaccess}]
+indent_style = tab
