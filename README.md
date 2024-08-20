@@ -22,3 +22,9 @@ Login to TYPO3-Backend is possible at https://ddev-dfgviewer.ddev.site/typo3/
 ### PHPMyAdmin
 
 With `ddev launch -p` you launch the PHPMyAdmin to access the TYPO3 database.
+
+## Maintainer
+
+If you have any questions or encounter any problems, please do not hesitate to contact us.
+
+- [Markus Weigelt](https://github.com/markusweigelt)
