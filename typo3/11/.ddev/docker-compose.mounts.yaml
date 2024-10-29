@@ -1,0 +1,4 @@
+services:
+  web:
+    volumes:
+      - "../../../../extensions:/var/www/extensions"

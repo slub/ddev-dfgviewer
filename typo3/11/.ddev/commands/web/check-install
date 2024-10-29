@@ -14,4 +14,3 @@ typo3cms configuration:set --json 'FE/cacheHash/requireCacheHashPresenceParamete
 typo3cms configuration:set 'FE/pageNotFoundOnCHashError' 0
 typo3cms configuration:set 'EXTCONF/lang/availableLanguages' '["de"]' --json
 typo3cms language:update
-echo
