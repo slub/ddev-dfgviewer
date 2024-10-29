@@ -9,6 +9,10 @@ A more comprehensive DDEV system based on database dumps is available at https:/
 ```bash
 git clone https://github.com/slub/ddev-dfgviewer.git
 cd ./ddev-dfgviewer
+```
+* create and start the DDEV project
+* install all dependencies including TYPO3, Kitodo.Presentation and DFG-Viewer
+* import the database
 
 ddev start
 ddev check-install
@@ -31,3 +35,10 @@ ddev reset
     - User: `admin`
     - Password: `adminslub`
 
+With `ddev launch -p` you launch the PHPMyAdmin to access the TYPO3 database.
+
+## Maintainer
+
+If you have any questions or encounter any problems, please do not hesitate to contact us.
+
+- [Markus Weigelt](https://github.com/markusweigelt)
