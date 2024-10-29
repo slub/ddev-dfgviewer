@@ -9,3 +9,4 @@ public
 config/sites
 extensions/*
 !extensions/.gitkeep
+.env
