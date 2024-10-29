@@ -7,3 +7,5 @@ var
 vendor
 public
 config/sites
+extensions/*
+!extensions/.gitkeep
