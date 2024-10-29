@@ -6,4 +6,4 @@ composer.lock
 var
 vendor
 public
-config
+config/sites
