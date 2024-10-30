@@ -8,6 +8,4 @@ vendor
 public
 config
 !config/sites/dfg-viewer/config.yml
-extensions/*
-!extensions/.gitkeep
 .env

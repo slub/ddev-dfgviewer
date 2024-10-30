@@ -1,0 +1,12 @@
+[submodule "extensions/dfg-viewer"]
+	path = extensions/dfg-viewer
+	url = https://github.com/markusweigelt/dfg-viewer.git
+	branch = update-typo12
+[submodule "extensions/kitodo-presentation"]
+	path = extensions/kitodo-presentation
+	url = https://github.com/markusweigelt/kitodo-presentation.git
+	branch = fixed-typo3-12
+[submodule "extensions/slub_digitalcollections"]
+	path = extensions/slub_digitalcollections
+	url = https://github.com/markusweigelt/slub_digitalcollections.git
+	branch = update-typo12
