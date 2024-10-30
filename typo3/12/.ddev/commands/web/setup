@@ -1,7 +1,8 @@
 #!/bin/bash
 
 ## Description: Install packages and TYPO3 (if not installed already) and set some basic configuration.
-## Usage: check-install
+## Usage: setup
+## Example: "ddev setup"
 
 composer install
 
