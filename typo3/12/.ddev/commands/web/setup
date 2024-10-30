@@ -5,13 +5,12 @@
 
 composer install
 
-test -f config/system/settings.php || typo3 setup
+test -f config/system/settings.php || typo3 install:setup
 
 # # Other settings
 typo3 configuration:set 'EXTENSIONS/dlf/fileGrpAudio' 'AUDIO'
 typo3 configuration:set 'EXTENSIONS/dlf/fileGrpVideo' 'VIDEO,DEFAULT'
 typo3 configuration:set --json 'FE/cacheHash/requireCacheHashPresenceParameters' '["tx_dlf[id]"]'
 typo3 configuration:set 'FE/pageNotFoundOnCHashError' 0
-typo3 configuration:set 'EXTCONF/lang/availableLanguages' '["de"]' --json
-typo3 language:update
+typo3 configuration:set 'SYS/trustedHostsPattern' '.*'
 

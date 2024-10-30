@@ -59,8 +59,7 @@
 	},
 	"scripts": {
 		"typo3-scripts": [
-			"typo3 install:fixfolderstructure",
-			"typo3 database:updateschema \"*.add,*.change\""
+			"typo3 install:fixfolderstructure"
 		],
 		"post-autoload-dump": [
 			"@typo3-scripts"

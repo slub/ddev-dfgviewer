@@ -42,3 +42,33 @@ With `ddev launch -p` you launch the PHPMyAdmin to access the TYPO3 database.
 If you have any questions or encounter any problems, please do not hesitate to contact us.
 
 - [Markus Weigelt](https://github.com/markusweigelt)
+
+
+Typo3 11
+
+adjust extension paths or add extension to directory
+
+ddev start
+
+--
+Welcome to the TYPO3 Console installer!
+
+✔ Prepare installation
+✔ Check environment and create folders
+➤ Set up database connection
+TCP Port of database server (default: "3306"):
+Unix Socket to connect to (default: ""):
+✔ Ok
+➤ Select database
+Use already existing database? (y/N): y
+✔ Ok
+➤ Set up database
+✔
+✔ Set up configuration
+✔ Set up web server configuration
+✔ Set up extensions
+--
+
+ddev stop
+
+ddev start

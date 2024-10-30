@@ -14,6 +14,19 @@ composer_version: "2"
 corepack_enable: false
 web_environment:
   - TYPO3_CONTEXT=Development
+  - TYPO3_INSTALL_DB_DRIVER=mysqli
+  - TYPO3_INSTALL_DB_USER=db
+  - TYPO3_INSTALL_DB_PASSWORD=db
+  - TYPO3_INSTALL_DB_HOST=db
+  - TYPO3_INSTALL_DB_DBNAME=db
+  - TYPO3_INSTALL_DB_PORT=3306
+  - TYPO3_INSTALL_DB_UNIX_SOCKET=
+  - TYPO3_INSTALL_DB_USE_EXISTING=y
+  - TYPO3_INSTALL_ADMIN_USER=admin
+  - TYPO3_INSTALL_ADMIN_PASSWORD=dfgAdmin.1
+  - TYPO3_INSTALL_SITE_NAME=DFG-Viewer TYPO3 11
+  - TYPO3_INSTALL_SITE_SETUP_TYPE=no
+  - TYPO3_INSTALL_WEB_SERVER_CONFIG=apache
 # Key features of DDEV's config.yaml:
 
 # name: <projectname> # Name of the project, automatically provides

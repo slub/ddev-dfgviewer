@@ -1,16 +1,13 @@
 #!/bin/bash
 
 ## Description: Install packages and TYPO3 (if not installed already) and set some basic configuration.
-## Usage: check-install
+## Usage: install
 
 composer install
 
 test -f public/typo3conf/LocalConfiguration.php || typo3cms install:setup
 
-# # Other settings
 typo3cms configuration:set 'EXTENSIONS/dlf/fileGrpAudio' 'AUDIO'
 typo3cms configuration:set 'EXTENSIONS/dlf/fileGrpVideo' 'VIDEO,DEFAULT'
 typo3cms configuration:set --json 'FE/cacheHash/requireCacheHashPresenceParameters' '["tx_dlf[id]"]'
 typo3cms configuration:set 'FE/pageNotFoundOnCHashError' 0
-typo3cms configuration:set 'EXTCONF/lang/availableLanguages' '["de"]' --json
-typo3cms language:update

@@ -6,7 +6,8 @@ composer.lock
 var
 vendor
 public
-config/sites
+config
+!config/sites/dfg-viewer/config.yml
 extensions/*
 !extensions/.gitkeep
 .env
