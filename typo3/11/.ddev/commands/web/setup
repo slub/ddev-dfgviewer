@@ -12,3 +12,4 @@ typo3cms configuration:set 'EXTENSIONS/dlf/fileGrpAudio' 'AUDIO'
 typo3cms configuration:set 'EXTENSIONS/dlf/fileGrpVideo' 'VIDEO,DEFAULT'
 typo3cms configuration:set --json 'FE/cacheHash/requireCacheHashPresenceParameters' '["tx_dlf[id]"]'
 typo3cms configuration:set 'FE/pageNotFoundOnCHashError' 0
+typo3cms configuration:set 'SYS/trustedHostsPattern' '.*'
