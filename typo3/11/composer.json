@@ -2,7 +2,8 @@
 	"repositories": {
 		"local": {
 			"type": "path",
-			"url": "/var/www/extensions/*"
+			"url": "/var/www/extensions/*",
+			"canonical": false
 		},
 		"0": {
 			"type": "composer",
@@ -24,9 +25,7 @@
 	},
 	"require": {
 		"helhum/typo3-console": "^7.0.2",
-		"kitodo/presentation": "@dev",
-		"slub/dfgviewer": "@dev",
-		"slub/slub-digitalcollections": "@dev",
+		"slub/dfgviewer": "dev-master",
 		"typo3/cms-backend": "^11.5.0",
 		"typo3/cms-belog": "^11.5.0",
 		"typo3/cms-beuser": "^11.5.0",

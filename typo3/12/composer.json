@@ -27,9 +27,7 @@
 	"prefer-stable": true,
 	"require": {
 		"helhum/typo3-console": "^8.1",
-		"kitodo/presentation": "@dev",
-		"slub/dfgviewer": "@dev",
-		"slub/slub-digitalcollections": "@dev",
+		"slub/dfgviewer": "dev-master",
 		"typo3/cms-backend": "^12.4.22",
 		"typo3/cms-belog": "^12.4.22",
 		"typo3/cms-beuser": "^12.4.22",
