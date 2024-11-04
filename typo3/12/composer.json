@@ -24,7 +24,7 @@
 		"sort-packages": true
 	},
 	"minimum-stability": "dev",
-	"prefer-stable": true,
+	"prefer-stable": false,
 	"require": {
 		"helhum/typo3-console": "^8.1",
 		"slub/dfgviewer": "dev-master",

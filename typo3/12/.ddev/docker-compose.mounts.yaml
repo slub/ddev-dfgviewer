@@ -1,4 +1,4 @@
 services:
   web:
     volumes:
-      - ${DFGVIEWER_EXTENSIONS:-../../../extensions}:/var/www/extensions
+      - ../../../../extensions:/var/www/extensions
