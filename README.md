@@ -22,13 +22,13 @@ A more comprehensive DDEV system based on database dumps is available at https:/
 
 Navigate to folder `./typo3/12/` and run [DDEV commands](#ddev-commands).
 
-Frontend is provided under url https://dfg-viewer-typo3-12.ddev.site and backend under https://dfg-viewer-typo3-12.ddev.site/typo3/ with user `admin` and `dvAdmin.1`.
+Frontend is provided under url https://dfg-viewer-typo3-12.ddev.site and backend under https://dfg-viewer-typo3-12.ddev.site/typo3/ with user `admin` and password `dvAdmin.1`.
 
 #### 11
 
 Navigate to folder `./typo3/11/` and run [DDEV commands](#ddev-commands).
 
-Frontend is provided under url https://dfg-viewer-typo3-12.ddev.site and backend under https://dfg-viewer-typo3-12.ddev.site/typo3/ with user `admin` and `dvAdmin.1`.
+Frontend is provided under url https://dfg-viewer-typo3-12.ddev.site and backend under https://dfg-viewer-typo3-12.ddev.site/typo3/ with user `admin` and password `dvAdmin.1`.
 
 *Due to the stricter password requirements as of TYPO3 12, the general password has changed. The username and password can be customized under `.ddev/config.yaml`*
 
@@ -52,42 +52,15 @@ Stops DDEV project containers.
 ddev stop
 ```
 
-Delete DDEV project containers.
+Delete DDEV project containers and project specific files and folders.
 
 ```bash
-ddev delete
-```
-*Project specific files and folders e.g. `composer.lock`, `config`, `public`, `var` and `vendor` must be deleted manually.*
-
-```bash
-rm -rf composer.lock config public var vendor
+ddev reset
 ```
 
 ## Extensions
 
 
-ddev start
-ddev check-install
-
-ddev launch /viewer/?tx_dlf%5Bid%5D=https%3A%2F%2Fdigital.slub-dresden.de%2Foai%2F%3Fverb%3DGetRecord%26metadataPrefix%3Dmets%26identifier%3Doai%3Ade%3Aslub-dresden%3Adb%3Aid-263566811
-ddev launch /viewer/?tx_dlf%5Bid%5D=https%3A%2F%2Fdigital.slub-dresden.de%2Foai%2F%3Fverb%3DGetRecord%26metadataPrefix%3Dmets%26identifier%3Doai%3Ade%3Aslub-dresden%3Adb%3Aid-1666480371
-#ddev launch /viewer/?tx_dlf%5Bid%5D=https%3A%2F%2Fdigital.slub-dresden.de%2Fdata%2Fkitodo%2FTheDarea_416971482-19100223%2FTheDarea_416971482-19100223_mets.xml
-```
-
-## Other Commands
-
-```bash
-# Start over
-ddev reset
-```
-
-## URLs
-
-- Backend Login: https://dfgviewer-dist.ddev.site/typo3/
-    - User: `admin`
-    - Password: `adminslub`
-
-With `ddev launch -p` you launch the PHPMyAdmin to access the TYPO3 database.
 
 ## Maintainer
 
