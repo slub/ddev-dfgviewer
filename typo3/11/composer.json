@@ -2,8 +2,7 @@
 	"repositories": {
 		"local": {
 			"type": "path",
-			"url": "/var/www/extensions/*",
-			"canonical": false
+			"url": "/var/www/extensions/*"
 		},
 		"0": {
 			"type": "composer",
