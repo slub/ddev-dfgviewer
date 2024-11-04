@@ -1,18 +1,70 @@
-# DDEV System for DFG-Viewer
+# DDEV for DFG-Viewer
 
 This DDEV system installs DFG Main based solely on its distribution package.
 
 A more comprehensive DDEV system based on database dumps is available at https://github.com/slub/ddev-dfgviewer.
 
-## Getting Started
+## Prerequisites
+
+* Install DDEV https://ddev.readthedocs.io/en/stable/users/install/ddev-installation/
+* Clone the repository
+
+    ```bash
+    git clone https://github.com/slub/ddev-dfgviewer
+    cd ./ddev-dfgviewer
+    ```
+
+## Getting started
+
+### TYPO3
+
+#### 12
+
+Navigate to folder `./typo3/12/` and run [DDEV commands](#ddev-commands).
+
+Frontend is provided under url https://dfg-viewer-typo3-12.ddev.site and backend under https://dfg-viewer-typo3-12.ddev.site/typo3/ with user `admin` and `dvAdmin.1`.
+
+#### 11
+
+Navigate to folder `./typo3/11/` and run [DDEV commands](#ddev-commands).
+
+Frontend is provided under url https://dfg-viewer-typo3-12.ddev.site and backend under https://dfg-viewer-typo3-12.ddev.site/typo3/ with user `admin` and `dvAdmin.1`.
+
+*Due to the stricter password requirements as of TYPO3 12, the general password has changed. The username and password can be customized under `.ddev/config.yaml`*
+
+### DDEV commands
+
+Start DDEV project containers.
 
 ```bash
-git clone https://github.com/slub/ddev-dfgviewer.git
-cd ./ddev-dfgviewer
+ddev start
 ```
-* create and start the DDEV project
-* install all dependencies including TYPO3, Kitodo.Presentation and DFG-Viewer
-* import the database
+
+Setup installs all necessary Composer packages. TYPO3 CLI installation routine is running and some configurations are carried out.
+
+```bash
+ddev setup
+```
+
+Stops DDEV project containers.
+
+```bash
+ddev stop
+```
+
+Delete DDEV project containers.
+
+```bash
+ddev delete
+```
+*Project specific files and folders e.g. `composer.lock`, `config`, `public`, `var` and `vendor` must be deleted manually.*
+
+```bash
+rm -rf composer.lock config public var vendor
+```
+
+## Extensions
+
 
 ddev start
 ddev check-install
@@ -42,33 +94,3 @@ With `ddev launch -p` you launch the PHPMyAdmin to access the TYPO3 database.
 If you have any questions or encounter any problems, please do not hesitate to contact us.
 
 - [Markus Weigelt](https://github.com/markusweigelt)
-
-
-Typo3 11
-
-adjust extension paths or add extension to directory
-
-ddev start
-
---
-Welcome to the TYPO3 Console installer!
-
-✔ Prepare installation
-✔ Check environment and create folders
-➤ Set up database connection
-TCP Port of database server (default: "3306"):
-Unix Socket to connect to (default: ""):
-✔ Ok
-➤ Select database
-Use already existing database? (y/N): y
-✔ Ok
-➤ Set up database
-✔
-✔ Set up configuration
-✔ Set up web server configuration
-✔ Set up extensions
---
-
-ddev stop
-
-ddev start
