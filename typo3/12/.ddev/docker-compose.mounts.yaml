@@ -1,4 +1,4 @@
 services:
   web:
     volumes:
-      - ../../../extensions:/var/www/extensions
+      - ../../../../extensions:/var/www/extensions

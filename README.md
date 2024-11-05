@@ -58,7 +58,11 @@ Delete DDEV project containers and project specific files and folders.
 ddev reset
 ```
 
-## Extensions
+## Extension development
+
+By default, the DFG-Viewer extension is installed with the version of the [DFG-Viewer master](https://github.com/slub/dfg-viewer) on GitHub (`dev-master`) and its dependent extensions [Kitodo.Presentation](https://github.com/kitodo/kitodo-presentation) and [SLUB Digital Collections](https://github.com/slub/slub_digitalcollections) with the corresponding version.
+
+In order to develop these further, it is possible to install the extensions from a local folder. This repository includes the folder `./extensions` into which the corresponding extension repositories can be cloned so that these are available to the DDEV Composer. If a different folder is to be used, then the relative path in the file `docker-compose.mounts.yaml` under the respective TYPO3 folder must be adjusted.
 
 
 
