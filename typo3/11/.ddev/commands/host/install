@@ -4,7 +4,7 @@
 ## Usage: install
 ## Example: "ddev install"
 
-if ! test -f test -f public/typo3conf/LocalConfiguration.php
+if ! test -f public/typo3conf/LocalConfiguration.php
 then
     # create base distribution
     ddev composer create "typo3/cms-base-distribution:^11"
@@ -15,7 +15,7 @@ then
     ddev composer config repositories.0 composer https://composer.typo3.org/
 
     # install general dependencies
-    ddev composer require "helhum/typo3-console:^8.2"
+    ddev composer require "helhum/typo3-console:^7.1"
 
     # install TYPO3 using web_environment settings in config.yaml
     ddev typo3cms install:setup
@@ -34,6 +34,3 @@ then
     ddev typo3cms configuration:set 'FE/pageNotFoundOnCHashError' 0
     ddev typo3cms configuration:set 'SYS/trustedHostsPattern' '.*'
 fi
-
-
-
