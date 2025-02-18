@@ -38,13 +38,13 @@ Frontend is provided under url https://dfg-viewer-typo3-11.ddev.site and backend
 
 ### DDEV commands
 
-Start DDEV project containers.
+#### Start DDEV project containers
 
 ```bash
 ddev start
 ```
 
-Run TYPO3 & dependency installation 
+#### Install TYPO3 and dependencies
 
 ```bash
 ddev install
@@ -58,13 +58,13 @@ What happens in this command?
 - Apply necessary extension setups, e.g., database changes or adding site configuration
 - Configure extensions
 
-Stops DDEV project containers.
+#### Stops DDEV project containers
 
 ```bash
 ddev stop
 ```
 
-Delete DDEV project containers and project specific files and folders.
+#### Delete DDEV project containers and project specific files and folders
 
 ```bash
 ddev reset
