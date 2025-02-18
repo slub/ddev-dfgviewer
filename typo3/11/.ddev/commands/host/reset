@@ -12,17 +12,13 @@ CHOICE=""
 
 # Functions
 reset_project () {
-    rm -r composer.lock
-    rm -rf public/
-    rm -rf config/
-    rm -rf vendor/
-    rm -rf var/
-
     ddev delete -Oy
+
+    # remove all folders except .ddev
+    find . ! -path ./.ddev ! -path './.ddev/*' -delete
 
     echo "Project is reset and ready to be restarted!"
 }
-
 
 # Parse options and arguments
 while :; do
