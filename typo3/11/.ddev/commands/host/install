@@ -13,6 +13,7 @@ then
     ddev composer config minimum-stability dev
     ddev composer config repositories.local path /var/www/extensions/*
     ddev composer config repositories.0 composer https://composer.typo3.org/
+    ddev composer config platform.php 8.1.31
 
     # install general dependencies
     ddev composer require "helhum/typo3-console:^7.1"
