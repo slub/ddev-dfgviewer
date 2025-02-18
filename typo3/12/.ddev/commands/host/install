@@ -1,0 +1,39 @@
+#!/bin/bash
+
+## Description: Install packages and TYPO3 (if not installed already) and set some basic configuration.
+## Usage: install
+## Example: "ddev install"
+
+if ! test -f config/system/settings.php
+then
+    # create base distribution
+    ddev composer create "typo3/cms-base-distribution:^12"
+
+    # configure composer
+    ddev composer config minimum-stability dev
+    ddev composer config repositories.local path /var/www/extensions/*
+    ddev composer config repositories.0 composer https://composer.typo3.org/
+
+    # install general dependencies
+    ddev composer require "helhum/typo3-console:^8.2"
+
+    # install TYPO3 using web_environment settings in config.yaml
+    ddev typo3 install:setup
+    ddev typo3 install:fixfolderstructure
+
+    # install DFG-Viewer dependencies
+    ddev composer require "kitodo/presentation:@dev"
+    ddev composer require "slub/slub-digitalcollections:@dev"
+    ddev composer require "slub/dfgviewer:@dev"
+    ddev typo3 install:extensionsetupifpossible
+
+    # configure dependencies
+    ddev typo3 configuration:set 'EXTENSIONS/dlf/fileGrpAudio' 'AUDIO'
+    ddev typo3 configuration:set 'EXTENSIONS/dlf/fileGrpVideo' 'VIDEO,DEFAULT'
+    ddev typo3 configuration:set --json 'FE/cacheHash/requireCacheHashPresenceParameters' '["tx_dlf[id]"]'
+    ddev typo3 configuration:set 'FE/pageNotFoundOnCHashError' 0
+    ddev typo3 configuration:set 'SYS/trustedHostsPattern' '.*'
+fi
+
+
+
