@@ -23,8 +23,10 @@
 		"sort-packages": true
 	},
 	"require": {
-		"helhum/typo3-console": "^7.0.2",
-		"slub/dfgviewer": "dev-master",
+		"helhum/typo3-console": "^7.0.5",
+		"kitodo/presentation": "@dev",
+		"slub/dfgviewer": "@dev",
+		"slub/slub-digitalcollections": "@dev",
 		"typo3/cms-backend": "^11.5.0",
 		"typo3/cms-belog": "^11.5.0",
 		"typo3/cms-beuser": "^11.5.0",

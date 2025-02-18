@@ -1,4 +1,5 @@
 services:
   web:
     volumes:
-      - ../../../extensions:/var/www/extensions
+      - ../../../../extensions:/var/www/extensions
+      #- ../../../../dlf-3d-viewers:/var/www/html/public/fileadmin/dlf_3d_viewers

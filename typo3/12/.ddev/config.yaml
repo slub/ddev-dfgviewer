@@ -1,7 +1,7 @@
 name: dfg-viewer-typo3-12
 type: typo3
 docroot: public
-php_version: "8.2"
+php_version: "8.3"
 webserver_type: nginx-fpm
 xdebug_enabled: false
 additional_hostnames: []
@@ -24,7 +24,7 @@ web_environment:
   - TYPO3_INSTALL_DB_USE_EXISTING=y
   - TYPO3_INSTALL_ADMIN_USER=admin
   - TYPO3_INSTALL_ADMIN_PASSWORD=dvAdmin.1
-  - TYPO3_INSTALL_SITE_NAME=DFG-Viewer TYPO3 11
+  - TYPO3_INSTALL_SITE_NAME=DFG-Viewer TYPO3 12
   - TYPO3_INSTALL_SITE_SETUP_TYPE=no
   - TYPO3_INSTALL_WEB_SERVER_CONFIG=apache
 # Key features of DDEV's config.yaml:

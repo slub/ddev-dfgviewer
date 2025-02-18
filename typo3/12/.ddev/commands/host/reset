@@ -12,15 +12,10 @@ CHOICE=""
 
 # Functions
 reset_project () {
-    # Workaround because the t3docs/render-documentation container creates the
-    # files with root and not the current user.
-    if [ -d .build/docs ]; then
-        sudo rm -rf .build/docs
-    fi
-
-    rm -rf .build
-    rm -r composer.lock
     ddev delete -Oy
+
+    # remove all folders except .ddev
+    find . ! -path ./.ddev ! -path './.ddev/*' -delete
 
     echo "Project is reset and ready to be restarted!"
 }
@@ -49,11 +44,11 @@ done
 
 # Set user confirmation if force option not set
 if [ ! "${FORCE}" = "true" ] ; then
-    printf "Warning, this will reset the project and remove all changes. Continue [yes/no]? "
+    printf "Warning, this will reset the project and remove all changes. Continue [Y/n]? "
     read -r CHOICE
 fi
 
-if [ "${CHOICE}" = "yes" ] || [ "${FORCE}" = "true" ] ; then
+if [ "${CHOICE}" = "Y" ] || [ "${FORCE}" = "true" ] ; then
     reset_project
 else
     echo "Project reset aborted."
