@@ -15,6 +15,9 @@ then
     ddev composer config repositories.0 composer https://composer.typo3.org/
     ddev composer config platform.php 8.1.31
 
+    # update base distribution
+    ddev composer update
+
     # install general dependencies
     ddev composer require "helhum/typo3-console:^7.1"
 

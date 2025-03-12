@@ -14,6 +14,9 @@ then
     ddev composer config repositories.local path /var/www/extensions/*
     ddev composer config repositories.0 composer https://composer.typo3.org/
 
+    # update base distribution
+    ddev composer update
+
     # install general dependencies
     ddev composer require "helhum/typo3-console:^8.2"
 

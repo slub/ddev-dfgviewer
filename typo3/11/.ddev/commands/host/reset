@@ -15,7 +15,7 @@ reset_project () {
     ddev delete -Oy
 
     # remove all folders except .ddev
-    find . ! -path ./.ddev ! -path './.ddev/*' -delete
+    sudo find . ! -path ./.ddev ! -path './.ddev/*' -delete
 
     echo "Project is reset and ready to be restarted!"
 }
