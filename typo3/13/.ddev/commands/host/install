@@ -18,10 +18,6 @@ then
     # update base distribution
     ddev composer install
 
-    #ddev typo3 setup
-
-    # --driver=mysqli --host=db --port=3306 --dbname=db --username=db --password=db --admin-username=admin --admin-user-password=dvAdmin.1 --admin-email=admin@test.de --project-name="DFG-Viewer TYPO3 13" --server-type=apache --no-interaction
-
     # install general dependencies
     ddev composer require "helhum/typo3-console:^8.2"
 
