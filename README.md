@@ -22,13 +22,19 @@ A more comprehensive DDEV system based on database dumps is available at https:/
     
 ## Getting started
 
+#### TYPO3 13
+
+Navigate to folder `./typo3/13/` and run `ddev install`.
+
+Frontend is provided under url https://dfg-viewer-typo3-13.ddev.site and backend under https://dfg-viewer-typo3-13.ddev.site/typo3/ with user `admin` and password `dvAdmin.1`.
+
 #### TYPO3 12
 
 Navigate to folder `./typo3/12/` and run `ddev install`.
 
 Frontend is provided under url https://dfg-viewer-typo3-12.ddev.site and backend under https://dfg-viewer-typo3-12.ddev.site/typo3/ with user `admin` and password `dvAdmin.1`.
 
-#### TYPO3 11
+#### TYPO3 11 (Legacy)
 
 Navigate to folder `./typo3/11/` and run `ddev install`.
 
